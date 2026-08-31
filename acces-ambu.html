@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisAmbulancier · Accès</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);--txt:#eef2ec;--txt2:#7a8a72;--em:#f97316;--em2:#c2410c;--red:#ef4444;--green:#22c55e;--mono:'DM Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(249,115,22,.07) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 80% 100%,rgba(239,68,68,.04) 0%,transparent 50%);}
+.container{max-width:400px;width:100%;position:relative;z-index:1;text-align:center;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;margin-bottom:4px}
+.logo span{color:var(--em)}
+.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--txt2);margin-bottom:36px;display:block}
+.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;padding:28px 24px;margin-bottom:14px;border-top:2px solid var(--em)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;color:var(--em);letter-spacing:.5px}
+.card-sub{font-size:12.5px;color:var(--txt2);margin-bottom:20px;line-height:1.6}
+.code-input{width:100%;padding:14px 16px;font-family:var(--mono);font-size:16px;letter-spacing:2px;text-transform:uppercase;text-align:center;background:rgba(0,0,0,.3);border:2px solid rgba(249,115,22,.2);border-radius:10px;color:var(--txt);outline:none;transition:border-color .2s;margin-bottom:12px}
+.code-input:focus{border-color:rgba(249,115,22,.6)}
+.code-input.error{border-color:var(--red);animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.msg-error{color:var(--red);font-size:11px;font-family:var(--mono);letter-spacing:1px;margin-bottom:10px;display:none}
+.msg-error.show{display:block}
+.niveau-select{width:100%;padding:12px;border-radius:10px;border:2px solid rgba(249,115,22,.2);background:rgba(0,0,0,.3);color:var(--txt);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;margin-bottom:14px;outline:none;cursor:pointer}
+.niveau-select:focus{border-color:rgba(249,115,22,.6)}
+.btn{width:100%;padding:14px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--em2),var(--em));color:#0d0f0a;transition:opacity .2s,transform .1s}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.success-wrap{text-align:center;padding:16px 0}
+.success-icon{font-size:44px;display:block;margin-bottom:12px}
+.success-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--green);letter-spacing:-0.5px;margin-bottom:6px}
+.success-sub{font-size:12px;color:var(--txt2);line-height:1.6}
+.success-bar{height:4px;background:rgba(34,197,94,.15);border-radius:2px;margin-top:16px;overflow:hidden}
+.success-bar-fill{height:100%;width:0;background:var(--green);border-radius:2px;transition:width 2s linear}
+.footer-txt{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);position:fixed;bottom:16px;left:0;right:0;text-align:center}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fadeup{animation:fadeUp .4s ease forwards}
+</style>
+</head>
+<body>
+<div class="container fadeup">
+  <div class="logo">Praxis<span>Ambulancier</span></div>
+  <span class="logo-sub">Formation pré-hospitalière · DEA & AA</span>
+
+  <div class="card" id="card-login">
+    <div class="card-title">🚑 Code d'accès</div>
+    <div class="card-sub">Saisissez le code fourni par votre formateur.</div>
+
+    <input type="text" class="code-input" id="code-input"
+      placeholder="AMBU-DEA-001" maxlength="30"
+      autocomplete="off" autocorrect="off" spellcheck="false"
+      oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')"
+      onkeydown="if(event.key==='Enter') valider()"/>
+
+    <select class="niveau-select" id="niveau-select">
+      <option value="DEA">DEA — Diplôme d'État d'Ambulancier</option>
+      <option value="AA">Auxiliaire Ambulancier</option>
+    </select>
+
+    <div class="msg-error" id="msg-error">⚠️ Code invalide</div>
+
+    <button class="btn" id="btn-valider" onclick="valider()">Accéder à PraxisAmbulancier →</button>
+  </div>
+
+  <div class="card" id="card-success" style="display:none">
+    <div class="success-wrap">
+      <span class="success-icon">✅</span>
+      <div class="success-title">Accès accordé</div>
+      <div class="success-sub" id="success-msg">Bienvenue ! Redirection...</div>
+      <div class="success-bar"><div class="success-bar-fill" id="bar-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer-txt">PraxisAmbulancier · MedExpert · Référentiel DEA 2021</div>
+
+<script>
+var SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+var SUPABASE_KEY  = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+window.onload = function(){
+  var code   = sessionStorage.getItem('praxisambu_code');
+  var niveau = sessionStorage.getItem('praxisambu_niveau');
+  if(code && niveau) window.location.replace('index-PraxisAmbulancier.html');
+};
+
+function valider(){
+  var input  = document.getElementById('code-input');
+  var code   = input.value.trim().toUpperCase();
+  var niveau = document.getElementById('niveau-select').value;
+  var btn    = document.getElementById('btn-valider');
+  var err    = document.getElementById('msg-error');
+
+  if(!code){ input.classList.add('error'); err.classList.add('show'); return; }
+
+  btn.disabled = true; btn.textContent = 'Vérification...';
+
+  // Dev fallback : codes AMBU- acceptés directement
+  if(code.startsWith('AMBU-')){
+    accordAcces(code, niveau, 'Ambulancier');
+    return;
+  }
+
+  fetch(SUPABASE_URL + '/functions/v1/verifier-acces', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
+    body: JSON.stringify({ code: code, app: 'PraxisAmbulancier' }),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    if(data.valide){
+      accordAcces(code, niveau, data.annee || 'DEA');
+    } else {
+      input.classList.add('error');
+      err.classList.add('show');
+      err.textContent = '⚠️ ' + (data.message || 'Code invalide');
+      btn.disabled = false;
+      btn.textContent = 'Accéder à PraxisAmbulancier →';
+    }
+  })
+  .catch(function(){
+    err.textContent = '⚠️ Erreur de connexion';
+    err.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Accéder à PraxisAmbulancier →';
+  });
+}
+
+function accordAcces(code, niveau, label){
+  sessionStorage.setItem('praxisambu_code',   code);
+  sessionStorage.setItem('praxisambu_niveau',  niveau);
+  sessionStorage.setItem('praxisambu_label',   label);
+
+  document.getElementById('card-login').style.display   = 'none';
+  document.getElementById('card-success').style.display = 'block';
+  document.getElementById('success-msg').textContent    = 'Bienvenue ! Niveau ' + niveau + ' — Redirection...';
+
+  setTimeout(function(){ document.getElementById('bar-fill').style.width = '100%'; }, 50);
+  setTimeout(function(){ window.location.replace('index-PraxisAmbulancier.html'); }, 2100);
+}
+</script>
+</body>
+</html>
