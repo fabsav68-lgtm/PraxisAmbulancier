@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisInstallation · Positions & brancardage</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#f59e0b;--em2:#92400e;--red:#ef4444;--green:#22c55e;--blue:#3b82f6;--orange:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+.module-header{background:linear-gradient(135deg,#110d00,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(245,158,11,.2)}
+
+/* Position card */
+.pos-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.pos-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer}
+.pos-icon{font-size:28px;flex-shrink:0}
+.pos-info{flex:1}
+.pos-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800}
+.pos-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.pos-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;font-family:var(--mono)}
+.pos-body{display:none;padding:0 14px 14px;border-top:1px solid var(--bdr)}
+.pos-body.open{display:block}
+
+/* Indication grid */
+.indic-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.indic-card{border-radius:10px;padding:10px;font-size:12px;line-height:1.6}
+.indic-ok{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.indic-ko{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+.indic-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;margin-bottom:4px}
+
+/* SVG position schéma */
+.schema-wrap{background:rgba(0,0,0,.3);border-radius:10px;padding:16px;margin:12px 0;text-align:center}
+.schema-label{font-size:10px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px;margin-top:8px}
+
+/* Étapes */
+.etapes{margin:12px 0;counter-reset:etape}
+.etape{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);align-items:flex-start}
+.etape:last-child{border-bottom:none}
+.etape-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;margin-top:1px}
+.etape-txt{font-size:13px;color:var(--txt);line-height:1.55;flex:1}
+.etape-alerte{font-size:12px;color:var(--red);margin-top:4px;font-weight:600}
+
+/* Checklist */
+.checklist{margin:10px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--bdr);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.check-box.checked{background:var(--green);border-color:var(--green)}
+.check-box.checked::after{content:'✓';color:#0d0f0a;font-size:12px;font-weight:800}
+.check-label{font-size:13px;color:var(--txt);line-height:1.5;flex:1}
+.check-label.checked{color:var(--txt2);text-decoration:line-through}
+
+.alerte-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fca5a5;line-height:1.6}
+.info-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#93c5fd;line-height:1.6}
+.amber-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fcd34d;line-height:1.6}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:var(--green)}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--red)}
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(245,158,11,.4)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">🛏️ PraxisInstallation</div>
+    <div class="module-badge">BC2 · POSITIONS & BRANCARDAGE</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(0)">📐 Positions</div>
+    <div class="tab" onclick="setTab(1)">🪵 Planchage</div>
+    <div class="tab" onclick="setTab(2)">🚑 Brancardage</div>
+    <div class="tab" onclick="setTab(3)">🔄 Relevage</div>
+    <div class="tab" onclick="setTab(4)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ TAB 0 : POSITIONS ══ -->
+<div id="tab-0">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">La position d'attente conditionne le pronostic vital. Elle doit être choisie en fonction de la pathologie et maintenue jusqu'à la prise en charge médicalisée.</p>
+
+  <!-- Décubitus dorsal -->
+  <div class="pos-card">
+    <div class="pos-header" onclick="togglePos(this)">
+      <div class="pos-icon">🤕</div>
+      <div class="pos-info">
+        <div class="pos-name" style="color:var(--red)">Décubitus dorsal strict</div>
+        <div class="pos-sub">+ membres inférieurs surélevés si choc</div>
+      </div>
+      <div class="pos-tag" style="background:rgba(239,68,68,.15);color:var(--red)">NOTRE PATIENT</div>
+    </div>
+    <div class="pos-body">
+      <div class="amber-box"><strong>Notre patient AVP moto :</strong> décubitus dorsal strict — trauma rachis + choc hémorragique. Membres inférieurs surélevés de 30° si possible (Trendelenburg modifié).</div>
+      <div class="indic-grid">
+        <div class="indic-card indic-ok">
+          <div class="indic-title">✅ Indications</div>
+          Choc hémorragique · Trauma rachis · Polytraumatisé · ACR · Inconscient avec trauma
+        </div>
+        <div class="indic-card indic-ko">
+          <div class="indic-title">❌ Contre-indications</div>
+          Détresse respiratoire isolée · OAP · Insuffisance cardiaque · Grossesse avancée
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demi-assise -->
+  <div class="pos-card">
+    <div class="pos-header" onclick="togglePos(this)">
+      <div class="pos-icon">🫀</div>
+      <div class="pos-info">
+        <div class="pos-name" style="color:var(--blue)">Position demi-assise (45°)</div>
+        <div class="pos-sub">Détresse respiratoire, cardiaque</div>
+      </div>
+      <div class="pos-tag" style="background:rgba(59,130,246,.15);color:var(--blue)">CARDIAQUE</div>
+    </div>
+    <div class="pos-body">
+      <div class="indic-grid">
+        <div class="indic-card indic-ok">
+          <div class="indic-title">✅ Indications</div>
+          OAP · Insuffisance cardiaque · Détresse respiratoire · Asthme · Pneumothorax (si non choqué)
+        </div>
+        <div class="indic-card indic-ko">
+          <div class="indic-title">❌ Contre-indications</div>
+          Choc · Trauma rachis · Hypotension · Inconscience
+        </div>
+      </div>
+      <div class="info-box">Dossier relevé à 45° — jambes en légère flexion pour diminuer le retour veineux et faciliter la respiration diaphragmatique.</div>
+    </div>
+  </div>
+
+  <!-- Anti-choc -->
+  <div class="pos-card">
+    <div class="pos-header" onclick="togglePos(this)">
+      <div class="pos-icon">🩸</div>
+      <div class="pos-info">
+        <div class="pos-name" style="color:var(--orange)">Position anti-choc (Trendelenburg)</div>
+        <div class="pos-sub">Choc hémorragique — MI surélevés</div>
+      </div>
+      <div class="pos-tag" style="background:rgba(249,115,22,.15);color:var(--orange)">CHOC</div>
+    </div>
+    <div class="pos-body">
+      <div class="indic-grid">
+        <div class="indic-card indic-ok">
+          <div class="indic-title">✅ Indications</div>
+          Choc hémorragique · Malaise vagal · Hypotension orthostatique
+        </div>
+        <div class="indic-card indic-ko">
+          <div class="indic-title">❌ Contre-indications</div>
+          OAP · Insuffisance cardiaque · Trauma crânien · Grossesse
+        </div>
+      </div>
+      <div class="amber-box">MI surélevés de 30-45° — augmente le retour veineux et améliore la perfusion cérébrale et coronarienne. Efficacité limitée dans le temps.</div>
+    </div>
+  </div>
+
+  <!-- Latérale de sécurité -->
+  <div class="pos-card">
+    <div class="pos-header" onclick="togglePos(this)">
+      <div class="pos-icon">😴</div>
+      <div class="pos-info">
+        <div class="pos-name" style="color:var(--green)">Position latérale de sécurité</div>
+        <div class="pos-sub">Inconscient qui respire — sans trauma rachis</div>
+      </div>
+      <div class="pos-tag" style="background:rgba(34,197,94,.15);color:var(--green)">PLS</div>
+    </div>
+    <div class="pos-body">
+      <div class="indic-grid">
+        <div class="indic-card indic-ok">
+          <div class="indic-title">✅ Indications</div>
+          Inconscient + respiration présente + absence trauma rachis · Intoxication · Crise convulsive post-critique
+        </div>
+        <div class="indic-card indic-ko">
+          <div class="indic-title">❌ Contre-indications</div>
+          Trauma rachis suspecté · ACR · Femme enceinte (côté gauche obligatoire)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gynécologique -->
+  <div class="pos-card">
+    <div class="pos-header" onclick="togglePos(this)">
+      <div class="pos-icon">🤰</div>
+      <div class="pos-info">
+        <div class="pos-name" style="color:#d946ef">Décubitus latéral gauche</div>
+        <div class="pos-sub">Femme enceinte > 20 SA</div>
+      </div>
+      <div class="pos-tag" style="background:rgba(217,70,239,.15);color:#d946ef">OBSTÉTRIQUE</div>
+    </div>
+    <div class="pos-body">
+      <div class="info-box">Après 20 semaines d'aménorrhée, le décubitus dorsal peut comprimer la veine cave inférieure par l'utérus gravide → syndrome cave → choc. Position latérale GAUCHE obligatoire pour dégager la VCI.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 1 : PLANCHAGE ══ -->
+<div id="tab-1" style="display:none">
+  <div class="amber-box"><strong>Notre patient AVP moto :</strong> planchage sur plan dur (spine board) avec immobilisation rachis complète — trauma rachis cervical et dorsal à exclure.</div>
+
+  <div class="section-title">Technique de planchage — Roulement en bloc</div>
+  <div class="info-box">Le roulement en bloc nécessite <strong>minimum 3 équipiers</strong> : un maintient la tête, deux gèrent le tronc et les membres. Un chef de manœuvre annonce chaque étape.</div>
+
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">1</div>
+      <div class="etape-txt"><strong>Préparation</strong> : plan dur positionné côté du retournement. Collier cervical en place. Maintien tête assuré par équipier 1 (chef de manœuvre).</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">2</div>
+      <div class="etape-txt"><strong>Positionnement des équipiers</strong> : équipier 2 (épaules/bassin), équipier 3 (bassin/membres inf). Tous du même côté du retournement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">3</div>
+      <div class="etape-txt"><strong>Annonce</strong> par le chef : "Attention pour le retournement — prêts ?" — attendre le "prêt" de chaque équipier.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">4</div>
+      <div class="etape-txt"><strong>Retournement en bloc</strong> sur l'ordre du chef — tête, épaules, bassin, membres pivotent SIMULTANÉMENT en un seul mouvement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">5</div>
+      <div class="etape-txt"><strong>Inspection du dos</strong> : plaies, déformations rachidiennes, hématomes. Puis glisser le plan dur.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">6</div>
+      <div class="etape-txt"><strong>Retour en décubitus dorsal</strong> sur le plan dur — même technique en bloc inverse.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">7</div>
+      <div class="etape-txt"><strong>Sanglage</strong> : sangles thorax, bassin, membres inf — tête immobilisée avec blocs mousse ou Kendrick.<div class="etape-alerte">⚠️ Vérifier constantes et pouls distaux après sanglage</div></div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Minimum 3 équipiers coordonnés</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Collier cervical en place avant manœuvre</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Chef de manœuvre désigné</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Retournement en un seul bloc synchronisé</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Dos inspecté avant retour</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Sanglage complet tête-pieds</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Constantes vérifiées après installation</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 : BRANCARDAGE ══ -->
+<div id="tab-2" style="display:none">
+  <div class="section-title">Principes généraux</div>
+  <div class="info-box">Le brancardage est le transfert de la victime du lieu de prise en charge jusqu'au véhicule sanitaire. Il doit préserver l'alignement rachidien et maintenir la surveillance des constantes.</div>
+
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">1</div>
+      <div class="etape-txt"><strong>Vérifier le matelas immobilisateur</strong> (matelas coquille) ou le brancard cuillère selon la situation — adapté au type de trauma.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">2</div>
+      <div class="etape-txt"><strong>Positionner le brancard</strong> : tête du patient vers l'avant dans le sens de marche — sauf escalier descendant (pieds en avant).</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">3</div>
+      <div class="etape-txt"><strong>Répartition des équipiers</strong> : plus fort à la tête (contrôle de la manœuvre), autres aux pieds. Dos droits, genoux fléchis.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">4</div>
+      <div class="etape-txt"><strong>Annonce coordonnée</strong> : "On se lève — 1, 2, 3, on lève !" — synchronisation absolue pour éviter les mouvements parasites.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">5</div>
+      <div class="etape-txt"><strong>Surveillance continue</strong> pendant le déplacement : conscience, coloration, ventilation, sangles.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--em)">6</div>
+      <div class="etape-txt"><strong>Chargement dans le véhicule</strong> : tête en premier — patient doit voir vers l'avant lors du transport pour limiter le mal des transports.</div>
+    </div>
+  </div>
+
+  <div class="alerte-box"><strong>TMS ambulancier :</strong> le brancardage est la 1ère cause de TMS dans la profession. Toujours fléchir les genoux, dos droit, jamais de rotation axiale. Utiliser les aides techniques disponibles (brancard électrique, roues).</div>
+</div>
+
+<!-- ══ TAB 3 : RELEVAGE ══ -->
+<div id="tab-3" style="display:none">
+  <div class="section-title">Brancard cuillère</div>
+  <div class="info-box">Le brancard cuillère (Scoop stretcher) permet de glisser sous la victime sans la mobiliser. Idéal pour les traumas rachis en terrain difficile.</div>
+
+  <div class="etapes">
+    <div class="etape"><div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">1</div><div class="etape-txt"><strong>Mesurer le brancard</strong> à la taille du patient — régler tête et pieds.</div></div>
+    <div class="etape"><div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">2</div><div class="etape-txt"><strong>Séparer les deux demi-cuillères</strong> — glisser chaque côté sous la victime sans la mobiliser latéralement.</div></div>
+    <div class="etape"><div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">3</div><div class="etape-txt"><strong>Clipper les deux extrémités</strong> (tête et pieds) — vérifier le verrouillage des deux côtés.</div></div>
+    <div class="etape"><div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">4</div><div class="etape-txt"><strong>Sangler</strong> sur le brancard cuillère avant tout déplacement.</div></div>
+    <div class="etape"><div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">5</div><div class="etape-txt"><strong>Transférer</strong> sur le matelas immobilisateur ou plan dur dès que possible.</div></div>
+  </div>
+
+  <div class="section-title">Matelas immobilisateur (coquille)</div>
+  <div class="info-box">Le matelas coquille (matelas à dépression) épouse la forme du patient une fois aspiré. Il immobilise l'ensemble du rachis et est confortable pour de longs transports.</div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Matelas à plat, valve ouverte</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Patient transféré sur le matelas (brancard cuillère)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Matelas moulé autour du patient</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Aspiration réalisée — matelas rigide</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Sanglage complet tête-pieds</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Constantes vérifiées avant transport</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 : QUIZ ══ -->
+<div id="tab-4" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+var prenom = localStorage.getItem('praxisambu_prenom') || 'Ambulancier';
+document.getElementById('prenom-display').textContent = prenom;
+
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===n); });
+  for(var i=0;i<5;i++) document.getElementById('tab-'+i).style.display = i===n?'block':'none';
+  tabActif = n; window.scrollTo(0,0);
+  if(n===4 && !quizInit) initQuiz();
+  stopAudio();
+}
+function togglePos(h){ h.nextElementSibling.classList.toggle('open'); }
+function toggleCheck(b){ b.classList.toggle('checked'); b.nextElementSibling.classList.toggle('checked'); }
+
+var quizInit=false, scoreOk=0, repondu=[];
+var QUESTIONS=[
+  {q:"Notre patient AVP moto présente un choc hémorragique et un trauma rachis suspecté. Quelle position adoptez-vous ?",opts:["Position demi-assise 45°","Décubitus dorsal strict avec MI surélevés","PLS côté gauche","Position assise jambes pendantes"],ok:1,exp:"Choc hémorragique → MI surélevés pour maximiser le retour veineux. Trauma rachis → décubitus dorsal strict avec immobilisation rachis. La PLS est contre-indiquée (trauma rachis)."},
+  {q:"Le roulement en bloc nécessite au minimum combien d'équipiers ?",opts:["1","2","3","4"],ok:2,exp:"Minimum 3 équipiers : 1 maintient la tête (chef de manœuvre), 2 gèrent le tronc et les membres. Pour un patient corpulent ou sur terrain difficile, 4 équipiers sont préférables."},
+  {q:"Quelle est la position d'une femme enceinte de 30 semaines en état de choc ?",opts:["Décubitus dorsal MI surélevés","Décubitus latéral droit","Décubitus latéral gauche","Demi-assise 45°"],ok:2,exp:"Après 20 SA, le décubitus dorsal comprime la veine cave inférieure par l'utérus. Le décubitus latéral GAUCHE dégage la VCI et restaure le retour veineux. C'est une urgence obstétricale."},
+  {q:"Lors d'un brancardage, dans quel sens est positionné le patient dans le couloir ?",opts:["Indifférent","Tête en avant dans le sens de marche","Pieds en avant dans le sens de marche","Tête vers le bas systématiquement"],ok:1,exp:"Tête en avant dans le sens de marche — sauf en escalier descendant où les pieds passent en premier. Cette position permet une surveillance visuelle du visage par l'équipier de tête."},
+  {q:"Quel outil permet de glisser sous une victime traumatisée sans la mobiliser latéralement ?",opts:["Matelas coquille","Brancard cuillère (Scoop)","Plan dur classique","Chaise de transport"],ok:1,exp:"Le brancard cuillère (Scoop stretcher) se sépare en deux demi-cuillères qui glissent de chaque côté sous la victime sans mobilisation latérale. Idéal pour les traumas rachis en terrain difficile."},
+  {q:"Après sanglage sur matelas coquille, que vérifiez-vous systématiquement ?",opts:["La température du patient","Les constantes vitales et les pouls distaux","La glycémie capillaire","La taille du collier cervical"],ok:1,exp:"Après tout sanglage, les constantes vitales ET les pouls distaux doivent être vérifiés. Un sanglage trop serré peut comprimer des vaisseaux et aggraver l'ischémie des membres."},
+  {q:"La position demi-assise à 45° est indiquée dans quel contexte ?",opts:["Choc hémorragique","Trauma rachis","Insuffisance cardiaque avec détresse respiratoire","Arrêt cardiaque"],ok:2,exp:"La position demi-assise facilite la ventilation en diminuant la pression abdominale sur le diaphragme et le retour veineux vers le cœur défaillant. Elle est contre-indiquée en cas de choc."},
+];
+
+function initQuiz(){
+  quizInit=true; scoreOk=0; repondu=new Array(QUESTIONS.length).fill(false);
+  document.getElementById('quiz-zone').innerHTML=QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'"><div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div><div class="quiz-options">'+
+      q.opts.map(function(o,oi){ return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>'; }).join('')+
+      '</div><div class="quiz-feedback" id="fb-'+qi+'"></div></div>';
+  }).join('');
+}
+
+function repondre(qi,oi){
+  if(repondu[qi]) return; repondu[qi]=true;
+  var q=QUESTIONS[qi];
+  document.querySelectorAll('#qq-'+qi+' .quiz-opt').forEach(function(o){ o.disabled=true; });
+  var fb=document.getElementById('fb-'+qi);
+  if(oi===q.ok){ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('correct'); fb.className='quiz-feedback show ok'; fb.textContent='✅ '+q.exp; scoreOk++; }
+  else{ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('wrong'); document.querySelectorAll('#qq-'+qi+' .quiz-opt')[q.ok].classList.add('correct'); fb.className='quiz-feedback show ko'; fb.textContent='❌ '+q.exp; }
+  if(repondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display='block';
+      document.getElementById('score-num').textContent=scoreOk+'/'+QUESTIONS.length;
+      var p=scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent=p===1?'🏆 Parfait '+prenom+' !':p>=.7?'👍 Bon résultat.':'📖 Continue à t\'entraîner.';
+    },400);
+  }
+}
+
+var AUDIO=[
+  "Positions d'attente. Cinq positions clés. Décubitus dorsal strict : trauma rachis, choc hémorragique, polytraumatisé — c'est notre patient AVP moto. Demi-assise 45° : détresse respiratoire, insuffisance cardiaque. Anti-choc Trendelenburg : membres inférieurs surélevés, choc hémorragique. PLS : inconscient qui respire, sans trauma rachis. Décubitus latéral gauche : femme enceinte après 20 semaines.",
+  "Planchage et roulement en bloc. Technique à 3 équipiers minimum. Chef de manœuvre maintient la tête. Retournement en un seul bloc synchronisé sur annonce du chef. Inspection du dos. Glisser le plan dur. Retour en décubitus dorsal. Sanglage complet tête-pieds. Vérifier constantes et pouls distaux.",
+  "Brancardage. Tête en avant dans le sens de marche, sauf escalier descendant. Dos droits, genoux fléchis. Synchronisation sur annonce. Surveillance continue pendant le déplacement. Attention aux TMS : première cause d'arrêt de travail chez l'ambulancier.",
+  "Relevage. Brancard cuillère : deux demi-cuillères glissent sous la victime sans mobilisation latérale. Idéal pour les traumas rachis. Matelas coquille : moulé autour du patient puis aspiré — rigide et confortable pour les longs transports. Vérifier sanglage et constantes avant tout déplacement.",
+  "Quiz positions et brancardage. 7 questions. Bonne chance "+prenom+"."
+];
+
+var synth=window.speechSynthesis, audioOn=false;
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn=true; document.getElementById('audio-btn').textContent='⏹';
+  var u=new SpeechSynthesisUtterance(AUDIO[tabActif]);
+  u.lang='fr-FR'; u.rate=0.92;
+  var v=synth.getVoices().filter(function(x){ return x.lang.startsWith('fr'); });
+  if(v.length) u.voice=v[0];
+  u.onend=function(){ audioOn=false; document.getElementById('audio-btn').textContent='🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
