@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisBilan · Bilan ambulancier</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--bg2:#111408;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#f97316;--em2:#c2410c;--red:#ef4444;--green:#22c55e;--blue:#3b82f6;--amber:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* Header */
+.module-header{background:linear-gradient(135deg,#1a0a00,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+
+/* Tabs */
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+/* Content */
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+
+/* Urgence banner */
+.urgence-banner{background:linear-gradient(135deg,rgba(239,68,68,.15),rgba(249,115,22,.1));border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:14px 16px;margin-bottom:20px}
+.urgence-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--red);letter-spacing:.5px;margin-bottom:6px}
+.urgence-txt{font-size:13px;color:var(--txt);line-height:1.65}
+.urgence-txt strong{color:var(--em)}
+
+/* Grille constantes */
+.constantes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:16px 0}
+.constante-card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center}
+.constante-val{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;display:block;margin-bottom:2px}
+.constante-label{font-size:10px;color:var(--txt2);font-family:var(--mono);letter-spacing:1px}
+.constante-status{font-size:10px;font-weight:700;margin-top:4px;display:block}
+.status-alert{color:var(--red)}
+.status-warn{color:var(--amber)}
+.status-ok{color:var(--green)}
+
+/* Section */
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(249,115,22,.2)}
+
+/* Étapes ABCDE */
+.abcde-step{background:var(--card);border:1px solid var(--bdr);border-radius:12px;margin-bottom:8px;overflow:hidden}
+.abcde-header{display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer}
+.abcde-letter{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;width:36px;text-align:center;flex-shrink:0}
+.abcde-info{flex:1}
+.abcde-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:.3px}
+.abcde-sub{font-size:11px;color:var(--txt2);margin-top:1px}
+.abcde-status{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0}
+.abcde-body{display:none;padding:0 14px 14px;border-top:1px solid var(--bdr)}
+.abcde-body.open{display:block}
+.abcde-body ul{list-style:none;padding:0;margin-top:10px}
+.abcde-body li{font-size:13px;color:var(--txt);padding:4px 0 4px 16px;position:relative;line-height:1.5}
+.abcde-body li::before{content:'→';position:absolute;left:0;color:var(--em)}
+.abcde-body li strong{color:var(--txt)}
+.abcde-body li.alert-item::before{content:'⚠';color:var(--red)}
+.abcde-body li.alert-item{color:var(--red)}
+
+/* Checklist */
+.checklist{margin:12px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--bdr);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.check-box.checked{background:var(--green);border-color:var(--green)}
+.check-box.checked::after{content:'✓';color:#0d0f0a;font-size:12px;font-weight:800}
+.check-label{font-size:13px;color:var(--txt);line-height:1.5;flex:1}
+.check-label.checked{color:var(--txt2);text-decoration:line-through}
+
+/* Radio simulation */
+.radio-box{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:14px;margin:12px 0}
+.radio-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--blue);letter-spacing:.5px;margin-bottom:8px}
+.radio-script{font-size:13px;color:var(--txt);line-height:1.7;font-style:italic}
+.radio-script strong{color:var(--em);font-style:normal}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:var(--green)}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--red)}
+
+/* Score */
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+/* Audio */
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(249,115,22,.4)}
+.audio-btn:active{transform:scale(.92)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">🚨 PraxisBilan</div>
+    <div class="module-badge">BC1 · BILAN AMBULANCIER</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs" id="tabs">
+    <div class="tab active" onclick="setTab(0)">🎬 Scénario</div>
+    <div class="tab" onclick="setTab(1)">📋 Bilan primaire</div>
+    <div class="tab" onclick="setTab(2)">🔍 Bilan secondaire</div>
+    <div class="tab" onclick="setTab(3)">📡 Transmission</div>
+    <div class="tab" onclick="setTab(4)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content" id="content">
+
+<!-- ══ TAB 0 : SCÉNARIO ══ -->
+<div id="tab-0">
+  <div class="urgence-banner">
+    <div class="urgence-title">🚨 APPEL SAMU — Intervention immédiate</div>
+    <div class="urgence-txt">
+      <strong>15h47 — Route départementale RD112, commune de Restincourt (30)</strong><br><br>
+      AVP moto — véhicule seul, choc frontal contre glissière de sécurité.<br>
+      Victime : homme, 35 ans environ, allongé sur la chaussée.<br>
+      Témoins présents. Casque retiré par les témoins — <strong>attention : rachis non protégé.</strong><br><br>
+      <strong>Tu es l'ambulancier DEA de garde. Tu arrives en 4 minutes.</strong>
+    </div>
+  </div>
+
+  <div class="section-title">Bilan circonstanciel</div>
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#f97316">S</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Sécurité de la scène</div>
+        <div class="abcde-sub">Avant toute approche — protection</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(239,68,68,.15);color:#ef4444">CRITIQUE</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li>Baliser la zone — triangles à 150m minimum, feux de détresse</li>
+        <li class="alert-item">Casque retiré par les témoins → immobilisation rachis IMMÉDIATE dès l'approche</li>
+        <li>Carburant visible ? Risque incendie → distance de sécurité</li>
+        <li>Trafic sécurisé ? Contacter gendarmerie si non</li>
+        <li>EPI : gants latex double, gilet haute visibilité</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="constantes-grid">
+    <div class="constante-card">
+      <span class="constante-val" style="color:#ef4444">8</span>
+      <span class="constante-label">GCS</span>
+      <span class="constante-status status-alert">Obnubilation</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#f59e0b">88</span>
+      <span class="constante-label">SpO2 %</span>
+      <span class="constante-status status-warn">Insuffisante</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#ef4444">72/40</span>
+      <span class="constante-label">PA mmHg</span>
+      <span class="constante-status status-alert">Choc hémorragique</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#f59e0b">124</span>
+      <span class="constante-label">FC bpm</span>
+      <span class="constante-status status-warn">Tachycardie</span>
+    </div>
+  </div>
+
+  <div class="section-title">Lésions identifiées</div>
+  <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:14px;font-size:13px;line-height:1.8">
+    🦵 <strong>Fracture fémur gauche</strong> — déformation visible, hématome massif<br>
+    🫁 <strong>Pneumothorax gauche suspecté</strong> — asymétrie thoracique, détresse respiratoire<br>
+    💪 <strong>Fracture radius droit</strong> — déformation poignet<br>
+    🧠 <strong>Trauma crânien</strong> — plaie scalp, GCS 8 (Y2 M5 V1)<br>
+    ⚠️ <strong>Trauma rachis cervical suspecté</strong> — casque retiré par témoins
+  </div>
+</div>
+
+<!-- ══ TAB 1 : BILAN PRIMAIRE ══ -->
+<div id="tab-1" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le bilan primaire s'effectue en moins de <strong style="color:var(--em)">90 secondes</strong>. Il suit la séquence ABCDE. Coche chaque étape au fur et à mesure.</p>
+
+  <div class="section-title">Séquence ABCDE — Bilan primaire</div>
+
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#ef4444">A</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Airway — Voies aériennes</div>
+        <div class="abcde-sub">Liberté + protection rachis</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(239,68,68,.15);color:#ef4444">PRIORITÉ 1</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li>Maintien tête en position neutre — immobilisation manuelle bimanuelle</li>
+        <li class="alert-item">Casque retiré par témoins → rachis non protégé — maintien IMPÉRATIF</li>
+        <li>Bouche : corps étranger ? Sang ? Vomissements ?</li>
+        <li>Parle-t-il ? → GCS V1 = pas de réponse verbale adaptée</li>
+        <li>Pose du collier cervical taille adaptée dès que possible</li>
+      </ul>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Immobilisation rachis cervical assurée</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Voies aériennes libres vérifiées</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Collier cervical posé</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#f59e0b">B</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Breathing — Ventilation</div>
+        <div class="abcde-sub">Fréquence, amplitude, symétrie</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(245,158,11,.15);color:#f59e0b">ALTÉRÉE</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li>FR : 28/min — polypnée de détresse</li>
+        <li>SpO2 : 88% — insuffisante, objectif ≥ 94%</li>
+        <li class="alert-item">Asymétrie thoracique gauche → pneumothorax suspecté</li>
+        <li>Murmure vésiculaire diminué à gauche à l'auscultation</li>
+        <li>Action : O2 masque haute concentration 15 L/min IMMÉDIATEMENT</li>
+        <li>Médicalisation urgente : pneumothorax compressif possible</li>
+      </ul>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">O2 haute concentration 15 L/min posé</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">SpO2 monitorée en continu</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Médicalisation demandée (pneumothorax)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#ef4444">C</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Circulation — Hémorragie</div>
+        <div class="abcde-sub">Contrôle saignements + état hémodynamique</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(239,68,68,.15);color:#ef4444">CHOC</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li class="alert-item">PA 72/40 + FC 124 = CHOC HÉMORRAGIQUE — tableau de choc décompensé</li>
+        <li>Fracture fémur gauche → hémorragie interne estimée 1 à 2L</li>
+        <li>Garrot CAT sur cuisse gauche si saignement extériorisé</li>
+        <li>TRC > 2 secondes — marbrures aux genoux</li>
+        <li>Voie veineuse périphérique si protocole autorisé par médecin régulateur</li>
+        <li>Position : décubitus dorsal strict, membres inf surélevés si possible</li>
+      </ul>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Saignements extériorisés contrôlés</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">PA et FC monitorées</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Choc hémorragique signalé au SAMU</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#a855f7">D</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Disability — Neurologique</div>
+        <div class="abcde-sub">GCS, pupilles, déficit moteur</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(168,85,247,.15);color:#a855f7">GCS 8</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li>GCS 8 — Y2 (ouverture yeux à la douleur) M5 (localisation) V1 (aucune)</li>
+        <li>Pupilles : isocores et réactives au moment de l'évaluation</li>
+        <li>Déficit moteur membres supérieurs à évaluer — fracture radius droite</li>
+        <li class="alert-item">Score < 9 → risque d'inhalation — surveiller voies aériennes en continu</li>
+        <li>Glycémie capillaire si possible : éliminer hypoglycémie</li>
+      </ul>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">GCS coté et tracé (Y+M+V)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Pupilles évaluées</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Glycémie capillaire réalisée</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="abcde-step">
+    <div class="abcde-header" onclick="toggleABCDE(this)">
+      <div class="abcde-letter" style="color:#22c55e">E</div>
+      <div class="abcde-info">
+        <div class="abcde-name">Exposure — Exposition</div>
+        <div class="abcde-sub">Déshabillage, lésions cachées, hypothermie</div>
+      </div>
+      <div class="abcde-status" style="background:rgba(34,197,94,.15);color:#22c55e">À COMPLÉTER</div>
+    </div>
+    <div class="abcde-body">
+      <ul>
+        <li>Déshabillage partiel — couper vêtements si nécessaire (ciseaux trauma)</li>
+        <li>Fracture fémur G : déformation visible, raccourcissement membre</li>
+        <li>Fracture radius D : déformation poignet, ecchymose</li>
+        <li>Plaie scalp saignante — compression manuelle</li>
+        <li class="alert-item">Risque hypothermie → couverture de survie dès que possible</li>
+        <li>Dos : roulement en bloc à 3 pour inspecter le rachis dorsal</li>
+      </ul>
+      <div class="checklist">
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Corps entier inspecté (dos inclus)</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Couverture de survie posée</div></div>
+        <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Température mesurée</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 : BILAN SECONDAIRE ══ -->
+<div id="tab-2" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le bilan secondaire est une évaluation systématique <strong style="color:var(--em)">tête aux pieds</strong>. Il complète le bilan primaire une fois les urgences vitales stabilisées.</p>
+
+  <div class="section-title">Évaluation tête aux pieds</div>
+
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--em);margin-bottom:6px">👤 Tête & cou</div>
+      <div style="font-size:12.5px;color:var(--txt);line-height:1.7">Plaie scalp occipitale saignante · Trachée médiane · Jugulaires non turgescentes · Collier en place</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--amber);margin-bottom:6px">🫁 Thorax</div>
+      <div style="font-size:12.5px;color:var(--txt);line-height:1.7">Asymétrie gauche · MV diminué gauche · Volet costal suspecté · Pas de plaie soufflante visible</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--red);margin-bottom:6px">🩸 Abdomen</div>
+      <div style="font-size:12.5px;color:var(--txt);line-height:1.7">Douleur à la palpation fosse iliaque gauche · Défense localisée · Hémopéritoine à éliminer</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--red);margin-bottom:6px">🦵 Membres inférieurs</div>
+      <div style="font-size:12.5px;color:var(--txt);line-height:1.7">Fémur G : déformation, raccourcissement, hématome massif · Attelle mise en place · Pouls pédieux G à surveiller</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--amber);margin-bottom:6px">💪 Membres supérieurs</div>
+      <div style="font-size:12.5px;color:var(--txt);line-height:1.7">Radius D : déformation poignet, ecchymose · Pouls radial D présent · Attelle à poser · Sensibilité digitale conservée</div>
+    </div>
+  </div>
+
+  <div class="section-title">Score de gravité</div>
+  <div class="constantes-grid">
+    <div class="constante-card">
+      <span class="constante-val" style="color:#ef4444">8</span>
+      <span class="constante-label">GCS</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#ef4444">72/40</span>
+      <span class="constante-label">PA mmHg</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#f59e0b">88%</span>
+      <span class="constante-label">SpO2</span>
+    </div>
+    <div class="constante-card">
+      <span class="constante-val" style="color:#ef4444">36°</span>
+      <span class="constante-label">Temp °C</span>
+    </div>
+  </div>
+  <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:12px;font-size:13px;color:var(--red);text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px">
+    ⚠️ POLYTRAUMATISÉ GRAVE — MÉDICALISATION URGENTE
+  </div>
+</div>
+
+<!-- ══ TAB 3 : TRANSMISSION ══ -->
+<div id="tab-3" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">La transmission au SAMU-15 suit un format <strong style="color:var(--em)">SBAR adapté ambulancier</strong> : Situation — Bilan — Actions — Recommandation.</p>
+
+  <div class="radio-box">
+    <div class="radio-label">📡 TRANSMISSION RADIO — SAMU 15</div>
+    <div class="radio-script">
+      <strong>"SAMU 15, ici ambulance [numéro], sur intervention AVP moto RD112 Restincourt."</strong><br><br>
+      <strong>S — Situation :</strong> "Victime unique, homme 35 ans environ, conducteur de moto, choc frontal contre glissière. Casque retiré par témoins à notre arrivée."<br><br>
+      <strong>B — Bilan :</strong> "GCS 8 — Y2 M5 V1. PA 72/40, FC 124, SpO2 88% sous O2 15L/min. Fracture fémur gauche avec hématome massif. Asymétrie thoracique gauche — pneumothorax suspecté. Fracture radius droit. Plaie scalp. Trauma rachis cervical — collier en place."<br><br>
+      <strong>A — Actions :</strong> "O2 haute concentration en cours. Immobilisation rachis assurée. Contrôle hémorragie externe. Monitoring continu."<br><br>
+      <strong>R — Recommandation :</strong> "Demande de médicalisation urgente — polytraumatisé grave, choc hémorragique. Orientation trauma center — quelle structure ?"
+    </div>
+  </div>
+
+  <div class="section-title">Points clés de la transmission</div>
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Identité de la victime (si connue) ou signalement</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Mécanisme lésionnel précis (cinétique AVP)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">GCS coté (Y + M + V séparément)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Constantes complètes (PA, FC, SpO2, FR, Temp)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Lésions identifiées dans l'ordre de gravité</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Gestes réalisés énoncés</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Demande médicale explicite</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Accusé réception confirmation destination</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 : QUIZ ══ -->
+<div id="tab-4" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+// ── Prénom ────────────────────────────────────────────────
+var prenom = localStorage.getItem('praxisambu_prenom') || '';
+if(!prenom){
+  prenom = prompt('Comment tu t\'appelles, équipier ?') || 'Ambulancier';
+  localStorage.setItem('praxisambu_prenom', prenom);
+}
+document.getElementById('prenom-display').textContent = prenom;
+
+// ── Tabs ──────────────────────────────────────────────────
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active', i===n); });
+  for(var i=0;i<5;i++){ document.getElementById('tab-'+i).style.display = i===n?'block':'none'; }
+  tabActif = n;
+  window.scrollTo(0,0);
+  if(n===4 && !quizInitialise) initQuiz();
+  stopAudio();
+}
+
+// ── ABCDE accordéon ──────────────────────────────────────
+function toggleABCDE(header){
+  var body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ── Checklist ────────────────────────────────────────────
+function toggleCheck(box){
+  box.classList.toggle('checked');
+  var label = box.nextElementSibling;
+  label.classList.toggle('checked');
+}
+
+// ── Quiz ──────────────────────────────────────────────────
+var quizInitialise = false;
+var scoreOk = 0;
+var quizRepondu = [];
+
+var QUESTIONS = [
+  {
+    q: "Sur ce patient AVP moto, quelle est votre PREMIÈRE action à l'approche de la victime ?",
+    opts: ["Prendre les constantes vitales","Immobiliser le rachis cervical manuellement","Appeler le SAMU-15","Poser une voie veineuse"],
+    ok: 1,
+    exp: "Le casque a été retiré par des témoins — le rachis cervical n'est pas protégé. L'immobilisation manuelle bimanuelle est la toute première action avant tout geste diagnostique."
+  },
+  {
+    q: "Le patient a une SpO2 à 88% et une asymétrie thoracique gauche. Quelle pathologie suspectez-vous en priorité ?",
+    opts: ["Hémothorax droit","Pneumothorax gauche compressif","Contusion pulmonaire droite","Épanchement pleural chronique"],
+    ok: 1,
+    exp: "L'asymétrie thoracique + SpO2 effondrée + murmure vésiculaire diminué à gauche orientent vers un pneumothorax gauche, potentiellement compressif — urgence chirurgicale."
+  },
+  {
+    q: "PA 72/40 mmHg, FC 124 bpm, TRC > 2s, marbrures. Ce tableau correspond à :",
+    opts: ["Choc cardiogénique","Choc anaphylactique","Choc hémorragique décompensé","Choc septique"],
+    ok: 2,
+    exp: "Dans le contexte d'un AVP avec fracture du fémur (perte estimée 1-2L), la triade PA effondrée + tachycardie + signes périphériques = choc hémorragique décompensé."
+  },
+  {
+    q: "Pour la transmission SAMU, le GCS 8 doit être communiqué comme :",
+    opts: ["'GCS 8 sur 15'","'Score neurologique 8'","'Y2 M5 V1' (cotation détaillée)","'Patient inconscient'"],
+    ok: 2,
+    exp: "La cotation détaillée Y+M+V est obligatoire dans la transmission médicale. Elle permet au médecin régulateur d'évaluer précisément l'état neurologique et d'anticiper l'évolution."
+  },
+  {
+    q: "Quelle est la position d'attente adaptée à ce polytraumatisé en choc hémorragique ?",
+    opts: ["Position latérale de sécurité","Demi-assise (45°)","Décubitus dorsal strict membres inférieurs surélevés","Position assise jambes pendantes"],
+    ok: 2,
+    exp: "Le choc hémorragique nécessite un décubitus dorsal avec membres inférieurs surélevés (position de Trendelenburg modifiée) pour maximiser le retour veineux, sauf contre-indication (trauma rachis)."
+  },
+  {
+    q: "Dans la transmission SAMU, à quel moment demandez-vous la médicalisation ?",
+    opts: ["En tout début d'appel avant le bilan","Après avoir exposé le bilan complet et les actions","Uniquement si le patient est inconscient","Jamais — c'est le SAMU qui décide seul"],
+    ok: 1,
+    exp: "La demande de médicalisation (R de SBAR) intervient après avoir exposé Situation, Bilan et Actions. Elle doit être explicite et argumentée, pas implicite."
+  },
+  {
+    q: "Pourquoi pose-t-on une couverture de survie sur ce patient en extérieur ?",
+    opts: ["Pour le protéger du regard des témoins","Car c'est obligatoire dans tout bilan secondaire","Pour prévenir l'hypothermie qui aggrave la coagulopathie","Pour faciliter le brancardage"],
+    ok: 2,
+    exp: "L'hypothermie est un facteur aggravant majeur du choc hémorragique — elle aggrave la coagulopathie (triangle de la mort : hypothermie + acidose + CIVD). La couverture de survie est un geste prioritaire."
+  },
+];
+
+function initQuiz(){
+  quizInitialise = true;
+  scoreOk = 0;
+  quizRepondu = new Array(QUESTIONS.length).fill(false);
+  var html = QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'">' +
+      '<div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div>' +
+      '<div class="quiz-options">' +
+      q.opts.map(function(o,oi){
+        return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>';
+      }).join('') +
+      '</div>' +
+      '<div class="quiz-feedback" id="fb-'+qi+'"></div>' +
+      '</div>';
+  }).join('');
+  document.getElementById('quiz-zone').innerHTML = html;
+}
+
+function repondre(qi, oi){
+  if(quizRepondu[qi]) return;
+  quizRepondu[qi] = true;
+  var q = QUESTIONS[qi];
+  var opts = document.querySelectorAll('#qq-'+qi+' .quiz-opt');
+  opts.forEach(function(o){ o.disabled = true; });
+  var fb = document.getElementById('fb-'+qi);
+  if(oi === q.ok){
+    opts[oi].classList.add('correct');
+    fb.className = 'quiz-feedback show ok';
+    fb.textContent = '✅ Correct — '+q.exp;
+    scoreOk++;
+  } else {
+    opts[oi].classList.add('wrong');
+    opts[q.ok].classList.add('correct');
+    fb.className = 'quiz-feedback show ko';
+    fb.textContent = '❌ Incorrect — '+q.exp;
+  }
+  if(quizRepondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display = 'block';
+      document.getElementById('score-num').textContent = scoreOk+'/'+QUESTIONS.length;
+      var pct = scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent =
+        pct===1 ? '🏆 Parfait '+prenom+' — tu maîtrises le bilan ambulancier !' :
+        pct>=.7 ? '👍 Bon résultat — revois les points manqués.' :
+        '📖 Continue à t\'entraîner — le bilan s\'automatise avec la pratique.';
+    }, 500);
+  }
+}
+
+// ── Audio ─────────────────────────────────────────────────
+var synth = window.speechSynthesis;
+var audioOn = false;
+var utterances = [];
+
+var AUDIO_SCRIPTS = [
+  // Tab 0
+  "Scénario. Il est 15h47. Tu es appelé en urgence sur la route départementale 112 pour un accident de moto. À ton arrivée, tu découvres un homme d'environ 35 ans allongé sur la chaussée. Son casque a été retiré par des témoins. Le GCS est à 8, la pression artérielle à 72 sur 40, et la SpO2 à 88%. Tu as affaire à un polytraumatisé grave.",
+  // Tab 1
+  "Bilan primaire. La séquence ABCDE doit être complétée en moins de 90 secondes. A : voies aériennes — le casque a été retiré par les témoins, immobilisation rachis IMMÉDIATE. B : ventilation — SpO2 88%, asymétrie thoracique gauche, pneumothorax suspecté, O2 haute concentration 15 litres-minute. C : circulation — choc hémorragique sur fracture fémur, PA 72 sur 40. D : neurologique — GCS 8, pupilles isocores. E : exposition — fracture fémur gauche, fracture radius droit, plaie scalp, couverture de survie.",
+  // Tab 2
+  "Bilan secondaire. Évaluation tête aux pieds. Tête : plaie scalp occipitale, collier en place. Thorax : asymétrie gauche, pneumothorax suspecté. Abdomen : douleur fosse iliaque gauche, hémopéritoine à éliminer. Membres inférieurs : fracture fémur gauche, attelle posée. Membres supérieurs : fracture radius droit. Conclusion : polytraumatisé grave, médicalisation urgente.",
+  // Tab 3
+  "Transmission SAMU. Format SBAR. Situation : AVP moto, homme 35 ans, casque retiré par témoins. Bilan : GCS 8 Y2 M5 V1, PA 72 sur 40, FC 124, SpO2 88% sous O2. Fracture fémur gauche, pneumothorax gauche suspecté, fracture radius droit, plaie scalp. Actions : O2 haute concentration, immobilisation rachis, monitoring. Recommandation : demande de médicalisation urgente, orientation trauma center.",
+  // Tab 4
+  "Quiz bilan ambulancier. 7 questions sur le scénario AVP moto. Réponds aux questions pour valider ta maîtrise du bilan primaire, secondaire et de la transmission SAMU."
+];
+
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn = true;
+  document.getElementById('audio-btn').textContent = '⏹';
+  var u = new SpeechSynthesisUtterance(AUDIO_SCRIPTS[tabActif]);
+  u.lang = 'fr-FR'; u.rate = 0.92; u.pitch = 1;
+  var voices = synth.getVoices().filter(function(v){ return v.lang.startsWith('fr'); });
+  if(voices.length) u.voice = voices[0];
+  u.onend = function(){ audioOn = false; document.getElementById('audio-btn').textContent = '🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+
+// postMessage pour inactivité
+window.addEventListener('message',function(e){
+  if(e.data&&e.data.type==='activite') window.parent.postMessage({type:'activite'},e.origin);
+});
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
