@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisGestes · Gestes d'urgence ambulancier</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--bg2:#110a0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#ef4444;--em2:#991b1b;--orange:#f97316;--green:#22c55e;--blue:#3b82f6;--amber:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+.module-header{background:linear-gradient(135deg,#110a0a,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(239,68,68,.2)}
+
+/* Geste card */
+.geste-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.geste-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.geste-icon{font-size:28px;flex-shrink:0}
+.geste-info{flex:1}
+.geste-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;letter-spacing:.3px}
+.geste-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.geste-urgence{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;flex-shrink:0;font-family:var(--mono)}
+.geste-body{display:none;padding:0 14px 14px;border-top:1px solid var(--bdr)}
+.geste-body.open{display:block}
+
+/* Étapes numérotées */
+.etapes{margin:12px 0;counter-reset:etape}
+.etape{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);align-items:flex-start}
+.etape:last-child{border-bottom:none}
+.etape-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;flex-shrink:0;margin-top:1px}
+.etape-txt{font-size:13px;color:var(--txt);line-height:1.55;flex:1}
+.etape-txt strong{color:var(--txt)}
+.etape-alerte{font-size:12px;color:var(--em);margin-top:4px;font-weight:600}
+
+/* Checklist */
+.checklist{margin:10px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--bdr);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.check-box.checked{background:var(--green);border-color:var(--green)}
+.check-box.checked::after{content:'✓';color:#0d0f0a;font-size:12px;font-weight:800}
+.check-label{font-size:13px;color:var(--txt);line-height:1.5;flex:1}
+.check-label.checked{color:var(--txt2);text-decoration:line-through}
+
+/* Alerte box */
+.alerte-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:var(--em);line-height:1.6}
+.alerte-box strong{font-weight:700}
+
+/* Info box */
+.info-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#93c5fd;line-height:1.6}
+
+/* Chrono */
+.chrono-wrap{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.chrono-badge{text-align:center;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:10px 14px}
+.chrono-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;color:var(--em);display:block}
+.chrono-label{font-size:10px;color:var(--txt2);font-family:var(--mono)}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--em);color:var(--em)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:var(--green)}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--em)}
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(239,68,68,.4)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">🩹 PraxisGestes</div>
+    <div class="module-badge">BC1 · GESTES D'URGENCE</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(0)">🩸 Garrot CAT</div>
+    <div class="tab" onclick="setTab(1)">⚡ DEA</div>
+    <div class="tab" onclick="setTab(2)">🫁 Heimlich</div>
+    <div class="tab" onclick="setTab(3)">🛌 PLS</div>
+    <div class="tab" onclick="setTab(4)">🦴 Immobilisation</div>
+    <div class="tab" onclick="setTab(5)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ TAB 0 : GARROT CAT ══ -->
+<div id="tab-0">
+  <div class="alerte-box">
+    <strong>⚠️ Contexte AVP — Fémur gauche :</strong> hémorragie externe massive sur fracture ouverte du fémur gauche. Perte estimée > 500 mL. Garrot CAT indiqué en urgence absolue.
+  </div>
+
+  <div class="chrono-wrap">
+    <div class="chrono-badge"><span class="chrono-val">30s</span><span class="chrono-label">pose max</span></div>
+    <div class="chrono-badge"><span class="chrono-val">2h</span><span class="chrono-label">durée max</span></div>
+    <div class="chrono-badge"><span class="chrono-val">5cm</span><span class="chrono-label">au-dessus plaie</span></div>
+  </div>
+
+  <div class="section-title">Pose du garrot CAT</div>
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">1</div>
+      <div class="etape-txt"><strong>Positionner le garrot</strong> à 5-7 cm au-dessus de la plaie — jamais sur une articulation (genou, coude).<div class="etape-alerte">⚠️ Fémur = cuisse — garrot en 1/3 supérieur de cuisse</div></div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">2</div>
+      <div class="etape-txt"><strong>Passer le garrot sous le membre</strong> et faire passer la sangle dans la boucle. Serrer manuellement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">3</div>
+      <div class="etape-txt"><strong>Tourner le cabestan</strong> jusqu'à l'arrêt du saignement — ne pas s'arrêter à la douleur du patient.<div class="etape-alerte">Signe d'efficacité : arrêt du saignement + pouls distal absent</div></div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">4</div>
+      <div class="etape-txt"><strong>Bloquer le cabestan</strong> avec le clip de sécurité. Garrot ne doit PLUS bouger.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">5</div>
+      <div class="etape-txt"><strong>Inscrire l'heure de pose</strong> sur le garrot à la marker — et la transmettre au SAMU. <strong>Ne jamais retirer le garrot.</strong></div>
+    </div>
+  </div>
+
+  <div class="section-title">Vérification</div>
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Garrot à 5 cm au-dessus de la plaie</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Saignement arrêté</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Pouls distal absent (efficacité confirmée)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Heure inscrite sur le garrot</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Heure transmise au SAMU</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Garrot visible — non recouvert</div></div>
+  </div>
+
+  <div class="alerte-box">
+    <strong>JAMAIS :</strong> Ne pas desserrer ni retirer le garrot sur le terrain. Ne pas poser sur une articulation. Ne pas masquer le garrot sous un pansement.
+  </div>
+</div>
+
+<!-- ══ TAB 1 : DEA ══ -->
+<div id="tab-1" style="display:none">
+  <div class="info-box">
+    Le DEA (Défibrillateur Externe Automatisé) est utilisable par tout ambulancier sans prescription médicale. Il guide vocalement l'opérateur. Objectif : choc électrique < 3 minutes après l'ACR.
+  </div>
+
+  <div class="chrono-wrap">
+    <div class="chrono-badge"><span class="chrono-val">3 min</span><span class="chrono-label">objectif choc</span></div>
+    <div class="chrono-badge"><span class="chrono-val">30:2</span><span class="chrono-label">RCP ratio</span></div>
+    <div class="chrono-badge"><span class="chrono-val">5cm</span><span class="chrono-label">profondeur MCE</span></div>
+  </div>
+
+  <div class="section-title">Séquence RCP + DEA</div>
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">1</div>
+      <div class="etape-txt"><strong>Sécurité + évaluation</strong> : victime inconsciente, ne réagit pas, ne respire pas normalement → ACR confirmé.<div class="etape-alerte">Agonale ≠ respiration normale → débuter la RCP</div></div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">2</div>
+      <div class="etape-txt"><strong>Appeler / faire appeler</strong> le 15 si pas encore fait. Envoyer chercher le DEA.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">3</div>
+      <div class="etape-txt"><strong>MCE immédiat</strong> : 30 compressions sternales — talon de main, bras tendus, 5-6 cm de profondeur, 100-120/min. Puis 2 insufflations.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">4</div>
+      <div class="etape-txt"><strong>Mettre en marche le DEA</strong> dès qu'il arrive — suivre les instructions vocales SANS interruption du MCE si possible.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">5</div>
+      <div class="etape-txt"><strong>Poser les électrodes</strong> : une sous la clavicule droite, une sous l'aisselle gauche — peau sèche et rasée si possible.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">6</div>
+      <div class="etape-txt"><strong>Analyse du rythme</strong> — s'écarter, ne plus toucher la victime. Suivre instruction DEA : choc ou pas de choc.<div class="etape-alerte">Choc indiqué → "Tout le monde s'écarte !" → appuyer le bouton</div></div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(59,130,246,.2);color:var(--blue)">7</div>
+      <div class="etape-txt"><strong>Reprendre le MCE immédiatement</strong> après le choc sans attendre de réévaluation. 2 minutes de RCP → nouvelle analyse.</div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">ACR confirmé (inconscient, apnée)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">15 appelé ou en cours</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">MCE débuté immédiatement</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">DEA mis en marche dès disponible</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Électrodes posées correctement</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Zone dégagée avant choc</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">RCP reprise immédiatement après choc</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 : HEIMLICH ══ -->
+<div id="tab-2" style="display:none">
+  <div class="info-box">
+    L'obstruction totale des voies aériennes (OVACE) est une urgence vitale immédiate. La manœuvre de Heimlich libère les voies aériennes par compression abdominale sous-diaphragmatique.
+  </div>
+
+  <div class="section-title">Adulte conscient — Obstruction totale</div>
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--amber)">1</div>
+      <div class="etape-txt"><strong>Confirmer l'obstruction totale</strong> : victime ne peut pas parler, tousser, ni respirer — signe universel main à la gorge.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--amber)">2</div>
+      <div class="etape-txt"><strong>5 claques dans le dos</strong> : passer le bras dans le dos de la victime, tête penchée en avant, 5 claques fermes entre les omoplates avec le talon de la main.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--amber)">3</div>
+      <div class="etape-txt"><strong>Si inefficace → Heimlich</strong> : se placer derrière la victime, passer les deux bras sous les siens. Poing fermé, face ulnaire sur l'épigastre (entre nombril et sternum).</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--amber)">4</div>
+      <div class="etape-txt"><strong>5 compressions abdominales</strong> : vers le haut et vers soi, mouvements secs et vigoureux.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(245,158,11,.2);color:var(--amber)">5</div>
+      <div class="etape-txt"><strong>Alterner</strong> 5 claques dos / 5 Heimlich jusqu'à expulsion du corps étranger ou perte de conscience.</div>
+    </div>
+  </div>
+
+  <div class="alerte-box">
+    <strong>Si perte de conscience :</strong> allonger au sol délicatement → démarrer RCP → regarder dans la bouche avant insufflations → retirer le corps étranger si VISIBLE.
+  </div>
+
+  <div class="section-title">Nourrisson (< 1 an)</div>
+  <div class="info-box">
+    Pas de Heimlich chez le nourrisson. Technique spécifique : 5 tapes dorsales + 5 compressions thoraciques (2 doigts sur sternum, 1/3 inférieur). Tête plus basse que le tronc.
+  </div>
+</div>
+
+<!-- ══ TAB 3 : PLS ══ -->
+<div id="tab-3" style="display:none">
+  <div class="info-box">
+    La Position Latérale de Sécurité (PLS) maintient les voies aériennes libres chez une victime inconsciente qui respire. Elle prévient l'inhalation de vomissements.
+  </div>
+
+  <div class="alerte-box">
+    <strong>⚠️ AVP moto :</strong> sur notre patient, la PLS est CONTRE-INDIQUÉE en raison du trauma rachis cervical suspecté. On maintient en décubitus dorsal avec immobilisation rachis.
+  </div>
+
+  <div class="section-title">PLS — Technique (victim sans trauma rachis)</div>
+  <div class="etapes">
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">1</div>
+      <div class="etape-txt"><strong>Positionner le bras côté retournement</strong> à angle droit du corps, coude fléchi, paume vers le haut.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">2</div>
+      <div class="etape-txt"><strong>Ramener l'autre bras</strong> sur la poitrine — dos de la main contre la joue du côté du retournement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">3</div>
+      <div class="etape-txt"><strong>Fléchir le genou opposé</strong> en gardant le pied au sol — ce sera le point d'appui du retournement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">4</div>
+      <div class="etape-txt"><strong>Retourner</strong> la victime vers soi en maintenant la main contre la joue. Le genou fléchi guide le mouvement.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">5</div>
+      <div class="etape-txt"><strong>Ajuster</strong> : genou supérieur à angle droit, tête inclinée en arrière pour ouvrir les voies aériennes, bouche vers le bas pour drainer.</div>
+    </div>
+    <div class="etape">
+      <div class="etape-num" style="background:rgba(34,197,94,.2);color:var(--green)">6</div>
+      <div class="etape-txt"><strong>Surveiller</strong> la ventilation toutes les minutes. Appeler le 15 si pas encore fait.</div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Victime inconsciente + respiration présente confirmées</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Absence de trauma rachis vérifiée</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">PLS réalisée côté stable</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Voies aériennes libres vérifiées</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Surveillance ventilatoire continue</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 : IMMOBILISATION ══ -->
+<div id="tab-4" style="display:none">
+  <div class="section-title">Immobilisation rachis cervical</div>
+  <div class="geste-card">
+    <div class="geste-header" onclick="toggleGeste(this)">
+      <div class="geste-icon">🦴</div>
+      <div class="geste-info">
+        <div class="geste-name" style="color:var(--orange)">Collier cervical</div>
+        <div class="geste-sub">Indiqué sur tout trauma rachis suspecté</div>
+      </div>
+      <div class="geste-urgence" style="background:rgba(249,115,22,.15);color:var(--orange)">PRIORITÉ</div>
+    </div>
+    <div class="geste-body">
+      <div class="etapes">
+        <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">1</div><div class="etape-txt">Maintien tête en position neutre par un équipier — sans traction</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">2</div><div class="etape-txt">Mesurer la taille du collier : distance menton-épaule</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">3</div><div class="etape-txt">Glisser la partie postérieure sous la nuque sans mobiliser le rachis</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">4</div><div class="etape-txt">Fixer la partie antérieure — vérifier position du menton et de la trachée</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">5</div><div class="etape-txt">Maintien manuel conservé jusqu'au planchage complet</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Attelle fémur — Fracture membre inférieur</div>
+  <div class="geste-card">
+    <div class="geste-header" onclick="toggleGeste(this)">
+      <div class="geste-icon">🦵</div>
+      <div class="geste-info">
+        <div class="geste-name" style="color:var(--em)">Attelle de traction (Donway / Sager)</div>
+        <div class="geste-sub">Fracture fémur — réduction traction axiale</div>
+      </div>
+      <div class="geste-urgence" style="background:rgba(239,68,68,.15);color:var(--em)">URGENT</div>
+    </div>
+    <div class="geste-body">
+      <div class="etapes">
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">1</div><div class="etape-txt">Antalgie avant pose si protocole — douleur intense à la manipulation</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">2</div><div class="etape-txt">Régler la longueur de l'attelle au membre sain</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">3</div><div class="etape-txt">Positionner l'anneau ischiatique haut dans l'aine</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">4</div><div class="etape-txt">Fixer la cheville dans le collier de traction</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">5</div><div class="etape-txt">Appliquer la traction progressive jusqu'à diminution de la douleur et correction de la déformation</div></div>
+        <div class="etape"><div class="etape-num" style="background:rgba(239,68,68,.2);color:var(--em)">6</div><div class="etape-txt">Vérifier pouls pédieux avant et après pose</div></div>
+      </div>
+      <div class="alerte-box">Contre-indications : fracture du col du fémur, fracture ouverte avec risque vasculaire, fracture cheville ipsilatérale.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 5 : QUIZ ══ -->
+<div id="tab-5" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+var prenom = localStorage.getItem('praxisambu_prenom') || 'Ambulancier';
+document.getElementById('prenom-display').textContent = prenom;
+
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===n); });
+  for(var i=0;i<6;i++) document.getElementById('tab-'+i).style.display = i===n?'block':'none';
+  tabActif = n;
+  window.scrollTo(0,0);
+  if(n===5 && !quizInit) initQuiz();
+  stopAudio();
+}
+
+function toggleGeste(header){
+  header.nextElementSibling.classList.toggle('open');
+}
+
+function toggleCheck(box){
+  box.classList.toggle('checked');
+  box.nextElementSibling.classList.toggle('checked');
+}
+
+var quizInit = false, scoreOk = 0, repondu = [];
+var QUESTIONS = [
+  {q:"Sur une fracture du fémur avec saignement extériorisé massif, où posez-vous le garrot CAT ?",opts:["Sur le genou","5 à 7 cm au-dessus de la plaie en 1/3 supérieur de cuisse","Directement sur la plaie","Le plus haut possible sur le membre"],ok:1,exp:"Le garrot se pose 5-7 cm au-dessus de la plaie, jamais sur une articulation. Pour le fémur, cela correspond au 1/3 supérieur de la cuisse."},
+  {q:"Quel est le signe qui confirme l'efficacité du garrot CAT ?",opts:["La douleur cesse","Le pouls distal est absent et le saignement est arrêté","La pression artérielle remonte","La victime reprend conscience"],ok:1,exp:"L'efficacité du garrot est confirmée par l'absence du pouls distal (artère pédiale) ET l'arrêt du saignement. La douleur seule n'est pas un critère suffisant."},
+  {q:"Pour le DEA, quelle est la profondeur de compression thoracique recommandée ?",opts:["2-3 cm","4-5 cm","5-6 cm","7-8 cm"],ok:2,exp:"Les recommandations ERC/ILCOR 2021 préconisent 5-6 cm de profondeur pour le MCE adulte, à 100-120 compressions par minute, avec décompression complète entre chaque compression."},
+  {q:"Après un choc électrique du DEA, que faites-vous IMMÉDIATEMENT ?",opts:["Attendre 30 secondes pour réévaluer","Reprendre le MCE immédiatement sans attendre","Vérifier le pouls carotidien","Retirer les électrodes"],ok:1,exp:"La RCP reprend IMMÉDIATEMENT après le choc, sans attendre. Le MCE maintient un flux sanguin minimal. La réévaluation se fait 2 minutes après, lors de la prochaine analyse du DEA."},
+  {q:"Sur notre patient AVP moto (trauma rachis suspecté), la PLS est-elle indiquée ?",opts:["Oui, pour libérer les voies aériennes","Non, car le trauma rachis contre-indique la mobilisation","Oui, si le GCS < 10","Uniquement si la SpO2 < 90%"],ok:1,exp:"Le trauma rachis cervical est une contre-indication à la PLS. On maintient le patient en décubitus dorsal avec immobilisation rachis manuelle puis collier cervical, en aspirant si nécessaire."},
+  {q:"La manœuvre de Heimlich s'applique dans quel cas ?",opts:["Obstruction partielle avec toux efficace","Obstruction totale : victime ne peut ni parler ni tousser","Toute détresse respiratoire","Asthme aigu sévère"],ok:1,exp:"Le Heimlich est indiqué en obstruction TOTALE uniquement. En cas d'obstruction partielle avec toux efficace, on encourage la toux et on surveille sans intervenir physiquement."},
+  {q:"Quelle est la PREMIÈRE étape avant de poser un collier cervical ?",opts:["Mesurer la taille du collier","Retirer le casque du patient","Maintien manuel de la tête en position neutre par un équipier","Installer le patient en PLS"],ok:2,exp:"Le maintien manuel bimanuel de la tête en position neutre doit être assuré EN PREMIER et maintenu pendant toute la procédure jusqu'au planchage complet. On ne pose jamais un collier sans ce maintien préalable."},
+];
+
+function initQuiz(){
+  quizInit=true; scoreOk=0; repondu=new Array(QUESTIONS.length).fill(false);
+  document.getElementById('quiz-zone').innerHTML = QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'"><div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div><div class="quiz-options">'+
+      q.opts.map(function(o,oi){ return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>'; }).join('')+
+      '</div><div class="quiz-feedback" id="fb-'+qi+'"></div></div>';
+  }).join('');
+}
+
+function repondre(qi,oi){
+  if(repondu[qi]) return;
+  repondu[qi]=true;
+  var q=QUESTIONS[qi];
+  document.querySelectorAll('#qq-'+qi+' .quiz-opt').forEach(function(o){ o.disabled=true; });
+  var fb=document.getElementById('fb-'+qi);
+  if(oi===q.ok){ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('correct'); fb.className='quiz-feedback show ok'; fb.textContent='✅ '+q.exp; scoreOk++; }
+  else{ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('wrong'); document.querySelectorAll('#qq-'+qi+' .quiz-opt')[q.ok].classList.add('correct'); fb.className='quiz-feedback show ko'; fb.textContent='❌ '+q.exp; }
+  if(repondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display='block';
+      document.getElementById('score-num').textContent=scoreOk+'/'+QUESTIONS.length;
+      var p=scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent=p===1?'🏆 Parfait '+prenom+' — tu maîtrises les gestes d\'urgence !':p>=.7?'👍 Bon résultat — revois les points manqués.':'📖 Continue à t\'entraîner — les gestes s\'automatisent avec la pratique.';
+    },400);
+  }
+}
+
+var AUDIO=[
+  "Garrot CAT. Indiqué en cas d'hémorragie externe massive. Pose en 30 secondes maximum, 5 centimètres au-dessus de la plaie, jamais sur une articulation. Tourner le cabestan jusqu'à l'arrêt du saignement et l'absence du pouls distal. Inscrire l'heure de pose. Ne jamais retirer le garrot sur le terrain.",
+  "DEA et RCP. En cas d'arrêt cardiaque, démarrer le MCE immédiatement : 30 compressions 5 à 6 centimètres de profondeur, 100 à 120 par minute, puis 2 insufflations. Mettre le DEA en marche dès qu'il est disponible. Coller les électrodes. S'écarter lors de l'analyse. Reprendre le MCE IMMÉDIATEMENT après le choc, sans attendre.",
+  "Heimlich. Obstruction totale des voies aériennes : la victime ne peut ni parler ni tousser. Alterner 5 claques dans le dos et 5 compressions abdominales jusqu'à expulsion du corps étranger. Si perte de conscience : allonger et débuter la RCP.",
+  "PLS — Position Latérale de Sécurité. Indiquée chez la victime inconsciente qui respire, sans trauma rachis. En cas de trauma rachis suspecté comme notre patient AVP moto, la PLS est CONTRE-INDIQUÉE. On maintient en décubitus dorsal avec immobilisation rachis.",
+  "Immobilisation. Collier cervical : maintien manuel d'abord, mesure de la taille, pose sans mobilisation du rachis. Attelle de traction pour fracture du fémur : régler sur le membre sain, poser l'anneau ischiatique, fixer la cheville, appliquer la traction progressive. Vérifier le pouls pédieux avant et après.",
+  "Quiz gestes d'urgence. 7 questions sur le garrot CAT, le DEA, le Heimlich, la PLS et l'immobilisation. Bonne chance "+prenom+"."
+];
+
+var synth=window.speechSynthesis, audioOn=false;
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn=true; document.getElementById('audio-btn').textContent='⏹';
+  var u=new SpeechSynthesisUtterance(AUDIO[tabActif]);
+  u.lang='fr-FR'; u.rate=0.92;
+  var v=synth.getVoices().filter(function(x){ return x.lang.startsWith('fr'); });
+  if(v.length) u.voice=v[0];
+  u.onend=function(){ audioOn=false; document.getElementById('audio-btn').textContent='🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
