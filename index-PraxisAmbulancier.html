@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisAmbulancier · Formation DEA & AA</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚑</text></svg>">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PraxisAmbu">
+<meta name="theme-color" content="#0d0f0a">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--bg2:#131610;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --bc1:#f97316;--bc2:#ef4444;--bc3:#f59e0b;--bc4:#22c55e;--bc5:#3b82f6;
+  --em:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+#home{position:fixed;inset:0;background:linear-gradient(160deg,var(--bg) 0%,#0f1208 60%,var(--bg) 100%);color:var(--txt);overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:'Karla',sans-serif;display:flex;flex-direction:column;}
+#module-frame{position:fixed;inset:0;width:100%;height:100%;border:none;display:none;background:var(--bg);z-index:100;}
+#btn-retour{position:fixed;top:env(safe-area-inset-top,12px);left:16px;z-index:200;display:none;background:rgba(13,15,10,.92);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:8px 16px;color:var(--txt);font-size:14px;font-weight:600;cursor:pointer;backdrop-filter:blur(10px);font-family:'Karla',sans-serif;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(13,15,10,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-0.5px}
+.nav-logo span{color:var(--em)}
+.nav-tag{font-size:10px;letter-spacing:2px;color:var(--txt2);border:1px solid rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;font-family:var(--mono)}
+
+/* Hero ambulance */
+.hero{text-align:center;padding:36px 20px 28px;position:relative}
+.hero-ambu{display:block;margin:0 auto 20px;width:180px}
+.hero-badge{display:inline-block;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--em);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-family:var(--mono);margin-bottom:14px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:900;line-height:1.05;letter-spacing:-1px;margin-bottom:10px}
+.hero h1 em{font-style:italic;color:var(--em)}
+.hero p{font-size:14px;color:var(--txt2);line-height:1.7;max-width:380px;margin:0 auto}
+
+/* Niveau selector */
+.niveau-wrap{display:flex;gap:8px;justify-content:center;margin:0 20px 24px;padding:0 20px}
+.niveau-btn{flex:1;max-width:160px;padding:10px;border-radius:10px;border:1.5px solid var(--bdr);background:var(--card);color:var(--txt2);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s}
+.niveau-btn.active{border-color:var(--em);background:rgba(249,115,22,.12);color:var(--em)}
+
+/* Grille modules */
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 40px;max-width:640px;margin:0 auto;width:100%}
+.module-card{position:relative;border-radius:14px;padding:16px 14px;border:1.5px solid rgba(255,255,255,.07);background:var(--card);display:flex;flex-direction:column;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,opacity .15s;user-select:none}
+.module-card:active{transform:scale(.97);opacity:.85}
+.module-card.locked{opacity:.35;cursor:not-allowed;filter:grayscale(60%)}
+.module-card.locked::after{content:'🔒';position:absolute;top:10px;right:10px;font-size:14px}
+.module-num{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);margin-bottom:8px}
+.module-icon{font-size:26px;margin-bottom:6px}
+.module-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:2px;line-height:1}
+.module-sub{font-size:10px;color:var(--txt2);margin-bottom:6px}
+.module-desc{font-size:11.5px;color:var(--txt2);line-height:1.55;flex:1;margin-bottom:10px}
+.module-btn{display:block;text-align:center;padding:8px;border-radius:8px;font-size:11px;font-weight:700;border:1.5px solid transparent;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+.module-card.full-width{grid-column:span 2}
+
+footer{border-top:1px solid rgba(255,255,255,.06);padding:20px;text-align:center;font-size:10px;color:var(--txt2);font-family:var(--mono)}
+</style>
+
+<script>
+(function(){
+  var code = sessionStorage.getItem('praxisambu_code');
+  var niveau = sessionStorage.getItem('praxisambu_niveau');
+  if(!code || !niveau) window.location.replace('acces-ambu.html');
+})();
+document.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='hidden'){
+    sessionStorage.removeItem('praxisambu_code');
+    sessionStorage.removeItem('praxisambu_niveau');
+  }
+});
+</script>
+</head>
+<body>
+<button id="btn-retour" onclick="retourAccueil()">← PraxisAmbulancier</button>
+<iframe id="module-frame" src="" allowfullscreen></iframe>
+
+<div id="home">
+  <nav>
+    <div class="nav-logo">Praxis<span>Ambulancier</span></div>
+    <div class="nav-tag" id="nav-niveau">DEA 2021</div>
+  </nav>
+
+  <!-- Hero SVG Ambulance -->
+  <div class="hero">
+    <svg class="hero-ambu" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Corps ambulance -->
+      <rect x="10" y="35" width="160" height="50" rx="6" fill="#1a1f14" stroke="#f97316" stroke-width="1.5"/>
+      <!-- Cabine -->
+      <rect x="130" y="20" width="40" height="35" rx="5" fill="#1a1f14" stroke="#f97316" stroke-width="1.5"/>
+      <!-- Vitre cabine -->
+      <rect x="136" y="26" width="28" height="18" rx="3" fill="rgba(59,130,246,.3)" stroke="#3b82f6" stroke-width="1"/>
+      <!-- Croix rouge -->
+      <rect x="75" y="45" width="20" height="6" rx="1" fill="#ef4444"/>
+      <rect x="82" y="38" width="6" height="20" rx="1" fill="#ef4444"/>
+      <!-- Gyrophare -->
+      <rect x="138" y="14" width="24" height="8" rx="3" fill="#1a1f14" stroke="#f97316" stroke-width="1"/>
+      <rect id="gyro-g" x="141" y="16" width="8" height="4" rx="1.5" fill="#ef4444" opacity="1"/>
+      <rect id="gyro-d" x="153" y="16" width="8" height="4" rx="1.5" fill="#3b82f6" opacity="0.2"/>
+      <!-- Roues -->
+      <circle cx="45" cy="85" r="12" fill="#0d0f0a" stroke="#7a8a72" stroke-width="2"/>
+      <circle cx="45" cy="85" r="5" fill="#7a8a72"/>
+      <circle cx="145" cy="85" r="12" fill="#0d0f0a" stroke="#7a8a72" stroke-width="2"/>
+      <circle cx="145" cy="85" r="5" fill="#7a8a72"/>
+      <!-- Bandes latérales -->
+      <rect x="10" y="55" width="120" height="4" fill="rgba(249,115,22,.3)"/>
+    </svg>
+
+    <div class="hero-badge">Formation pré-hospitalière · Simulation numérique</div>
+    <h1>L'urgence<br>ça s'<em>apprend</em></h1>
+    <p>5 blocs de compétences DEA · Scénarios immersifs · Audio intégré<br>Auxiliaire Ambulancier & DEA</p>
+  </div>
+
+  <!-- Sélecteur niveau -->
+  <div class="niveau-wrap">
+    <button class="niveau-btn" id="btn-aa" onclick="setNiveau('AA')">Auxiliaire Amb.</button>
+    <button class="niveau-btn active" id="btn-dea" onclick="setNiveau('DEA')">DEA complet</button>
+  </div>
+
+  <!-- Modules -->
+  <div class="modules-grid" id="modules-grid">
+
+    <div class="module-card" id="card-bc1" onclick="ouvrirModule('PraxisBilan-Ambu.html')" style="border-color:rgba(249,115,22,.25)">
+      <div class="module-num">BC1 · BLOC 1</div>
+      <div class="module-icon">🚨</div>
+      <div class="module-name" style="color:var(--bc1)">PraxisBilan</div>
+      <div class="module-sub">Bilan primaire & secondaire</div>
+      <div class="module-desc">ABCDE, bilan circonstanciel, lésionnel, vital — AVP moto en situation réelle.</div>
+      <div class="module-btn" style="background:rgba(249,115,22,.1);color:var(--bc1);border-color:rgba(249,115,22,.3)">Démarrer</div>
+    </div>
+
+    <div class="module-card" id="card-bc2" onclick="ouvrirModule('PraxisGestes-Ambu.html')" style="border-color:rgba(239,68,68,.25)">
+      <div class="module-num">BC1 · BLOC 2</div>
+      <div class="module-icon">🩹</div>
+      <div class="module-name" style="color:var(--bc2)">PraxisGestes</div>
+      <div class="module-sub">Gestes d'urgence</div>
+      <div class="module-desc">Garrot CAT, compression, PLS, DEA, Heimlich, immobilisation.</div>
+      <div class="module-btn" style="background:rgba(239,68,68,.1);color:var(--bc2);border-color:rgba(239,68,68,.3)">Démarrer</div>
+    </div>
+
+    <div class="module-card" id="card-bc3" onclick="ouvrirModule('PraxisInstallation-Ambu.html')" style="border-color:rgba(245,158,11,.25)">
+      <div class="module-num">BC2 · BLOC 3</div>
+      <div class="module-icon">🛏️</div>
+      <div class="module-name" style="color:var(--bc3)">PraxisInstallation</div>
+      <div class="module-sub">Positions & brancardage</div>
+      <div class="module-desc">PLS, anti-choc, demi-assise, relevage, immobilisation rachis.</div>
+      <div class="module-btn" style="background:rgba(245,158,11,.1);color:var(--bc3);border-color:rgba(245,158,11,.3)">Démarrer</div>
+    </div>
+
+    <div class="module-card" id="card-bc4" onclick="ouvrirModule('PraxisRegulation-Ambu.html')" style="border-color:rgba(34,197,94,.25)">
+      <div class="module-num">BC3 · BLOC 4</div>
+      <div class="module-icon">📡</div>
+      <div class="module-name" style="color:var(--bc4)">PraxisRégulation</div>
+      <div class="module-sub">SAMU-15 & communication</div>
+      <div class="module-desc">Interface ARM, bilan radio, SBAR ambulancier, régulation médicale.</div>
+      <div class="module-btn" style="background:rgba(34,197,94,.1);color:var(--bc4);border-color:rgba(34,197,94,.3)">Démarrer</div>
+    </div>
+
+    <div class="module-card full-width" id="card-bc5" onclick="ouvrirModule('PraxisRealites-Ambu.html')" style="border-color:rgba(59,130,246,.25)">
+      <div class="module-num">BC4-BC5 · BLOC 5</div>
+      <div class="module-icon">🧠</div>
+      <div class="module-name" style="color:var(--bc5)">PraxisRéalités</div>
+      <div class="module-sub">Réalités du métier · Santé au travail · Réglementation</div>
+      <div class="module-desc">TMS, stress post-traumatique, nuits & gardes, cadre légal ambulancier, secret professionnel.</div>
+      <div class="module-btn" style="background:rgba(59,130,246,.1);color:var(--bc5);border-color:rgba(59,130,246,.3)">Démarrer</div>
+    </div>
+
+  </div>
+
+  <footer>
+    PraxisAmbulancier · Référentiel DEA arrêté 26 janv. 2021 · MedExpert<br>
+    <a href="stats-ambu.html" style="color:rgba(255,255,255,.08);font-size:9px;text-decoration:none">accès formateur</a>
+  </footer>
+</div>
+
+<script>
+// ── Gyrophare animé ─────────────────────────────────────────
+var gyroG = document.getElementById('gyro-g');
+var gyroD = document.getElementById('gyro-d');
+setInterval(function(){
+  gyroG.style.opacity = gyroG.style.opacity === '1' ? '0.15' : '1';
+  gyroD.style.opacity = gyroD.style.opacity === '1' ? '0.15' : '1';
+}, 500);
+
+// ── Niveau ──────────────────────────────────────────────────
+var niveauActuel = sessionStorage.getItem('praxisambu_niveau') || 'DEA';
+
+function setNiveau(n){
+  niveauActuel = n;
+  sessionStorage.setItem('praxisambu_niveau', n);
+  document.getElementById('btn-aa').classList.toggle('active', n==='AA');
+  document.getElementById('btn-dea').classList.toggle('active', n==='DEA');
+  document.getElementById('nav-niveau').textContent = n==='AA' ? 'Auxiliaire Amb.' : 'DEA 2021';
+  appliquerNiveau();
+}
+
+function appliquerNiveau(){
+  // AA = BC1 uniquement (bilan + gestes) ; DEA = tout
+  var modulesAA = ['card-bc1','card-bc2'];
+  var tousCards = ['card-bc1','card-bc2','card-bc3','card-bc4','card-bc5'];
+  tousCards.forEach(function(id){
+    var card = document.getElementById(id);
+    if(!card) return;
+    if(niveauActuel === 'AA' && modulesAA.indexOf(id) === -1){
+      card.classList.add('locked');
+    } else {
+      card.classList.remove('locked');
+    }
+  });
+}
+
+setNiveau(niveauActuel);
+
+// ── Navigation modules ──────────────────────────────────────
+var _moduleStart = null;
+var _moduleNom = null;
+
+function ouvrirModule(fichier){
+  var card = event && event.currentTarget;
+  if(card && card.classList.contains('locked')) return;
+
+  var frame = document.getElementById('module-frame');
+  var btnRetour = document.getElementById('btn-retour');
+  var home = document.getElementById('home');
+
+  _moduleStart = Date.now();
+  _moduleNom = fichier.replace('.html','');
+
+  frame.src = fichier;
+  frame.style.display = 'block';
+  btnRetour.style.display = 'block';
+  home.style.display = 'none';
+  window.scrollTo(0,0);
+}
+
+function retourAccueil(){
+  var frame = document.getElementById('module-frame');
+  frame.style.display = 'none';
+  frame.src = 'about:blank';
+  document.getElementById('btn-retour').style.display = 'none';
+  document.getElementById('home').style.display = 'flex';
+}
+
+// ── Inactivité 5 min ────────────────────────────────────────
+var _timer = null;
+function resetTimer(){
+  clearTimeout(_timer);
+  _timer = setTimeout(function(){
+    sessionStorage.removeItem('praxisambu_code');
+    sessionStorage.removeItem('praxisambu_niveau');
+    window.location.replace('acces-ambu.html');
+  }, 5*60*1000);
+}
+document.addEventListener('click', resetTimer);
+document.addEventListener('touchstart', resetTimer);
+resetTimer();
+</script>
+</body>
+</html>
