@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisRéalités · Réalités du métier ambulancier</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#3b82f6;--em2:#1e3a5f;--red:#ef4444;--green:#22c55e;--amber:#f59e0b;--orange:#f97316;--violet:#a855f7;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+.module-header{background:linear-gradient(135deg,#0a0d1a,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(59,130,246,.2)}
+
+.realite-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.realite-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer}
+.realite-icon{font-size:28px;flex-shrink:0}
+.realite-info{flex:1}
+.realite-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800}
+.realite-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.realite-body{display:none;padding:0 14px 14px;border-top:1px solid var(--bdr)}
+.realite-body.open{display:block}
+.realite-body p{font-size:13px;color:var(--txt2);line-height:1.75;margin-top:10px}
+.realite-body p strong{color:var(--txt)}
+.realite-body ul{list-style:none;padding:0;margin-top:10px}
+.realite-body li{font-size:13px;color:var(--txt2);padding:4px 0 4px 16px;position:relative;line-height:1.55}
+.realite-body li::before{content:'→';position:absolute;left:0;color:var(--em)}
+
+/* Cadre légal */
+.loi-card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:10px}
+.loi-title{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;margin-bottom:6px}
+.loi-ref{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;color:var(--txt2);margin-bottom:6px}
+.loi-desc{font-size:13px;color:var(--txt2);line-height:1.65}
+.loi-desc strong{color:var(--txt)}
+
+.alerte-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fca5a5;line-height:1.6}
+.info-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#93c5fd;line-height:1.6}
+.amber-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fcd34d;line-height:1.6}
+.violet-box{background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#d8b4fe;line-height:1.6}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:#22c55e;color:#22c55e}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:#22c55e}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--red)}
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(59,130,246,.4)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">🧠 PraxisRéalités</div>
+    <div class="module-badge">BC4-BC5 · RÉALITÉS DU MÉTIER</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(0)">💪 TMS & Santé</div>
+    <div class="tab" onclick="setTab(1)">😤 Stress & Trauma</div>
+    <div class="tab" onclick="setTab(2)">🌙 Nuits & Gardes</div>
+    <div class="tab" onclick="setTab(3)">⚖️ Cadre légal</div>
+    <div class="tab" onclick="setTab(4)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ TAB 0 : TMS ══ -->
+<div id="tab-0">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Les TMS (Troubles Musculo-Squelettiques) représentent la <strong style="color:var(--em)">1ère cause d'arrêt de travail</strong> chez les ambulanciers. Les connaître, c'est déjà se protéger.</p>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🦴</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--orange)">TMS — Troubles Musculo-Squelettiques</div>
+        <div class="realite-sub">Dos, épaules, genoux — les zones à risque</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <p>Le brancardage répété, les postures contraintes et les gestes asymétriques créent des <strong>micro-traumatismes cumulatifs</strong> sur le rachis lombaire, les épaules et les genoux.</p>
+      <ul>
+        <li>Rachis lombaire : 1ère zone touchée — hernies discales fréquentes dès 5 ans de métier</li>
+        <li>Épaules : port du matériel lourd, positions en élévation prolongée</li>
+        <li>Genoux : montées/descentes répétées de véhicule, positions accroupies</li>
+        <li>Poignets : portage du brancard, manipulation du matériel</li>
+      </ul>
+      <div class="amber-box"><strong>Règles d'or :</strong> dos droit, genoux fléchis, charge proche du corps. Toujours utiliser les aides techniques disponibles. Ne jamais porter seul ce qui nécessite deux personnes.</div>
+    </div>
+  </div>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🏋️</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--green)">Prévention active</div>
+        <div class="realite-sub">Ce que tu peux faire dès maintenant</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <ul>
+        <li>Renforcement musculaire : gainage, dos, épaules — 3x/semaine minimum</li>
+        <li>Étirements après chaque garde longue — chaîne postérieure prioritaire</li>
+        <li>Technique de relevage : formation PRAP obligatoire — à renouveler</li>
+        <li>Signaler tout matériel défectueux (brancard électrique en panne = risque immédiat)</li>
+        <li>Déclarer toute douleur précoce — ne pas attendre l'invalidité</li>
+        <li>Visite médicale annuelle — ne pas la différer</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🔬</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--red)">Risques biologiques</div>
+        <div class="realite-sub">AES, contamination, EPI</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <p>L'ambulancier est exposé aux <strong>Accidents d'Exposition au Sang (AES)</strong> et aux pathologies infectieuses transmissibles.</p>
+      <ul>
+        <li>Gants latex systématiques — double gantage sur trauma hémorragique</li>
+        <li>Masque FFP2 si suspicion pathologie respiratoire (COVID, tuberculose…)</li>
+        <li>Vaccination obligatoire : hépatite B, DTP, grippe recommandée</li>
+        <li>En cas d'AES : rinçage immédiat 5 min, déclaration accident du travail dans les 24h, consultation urgente médecin du travail</li>
+      </ul>
+      <div class="alerte-box"><strong>AES = urgence médicale pour l'ambulancier.</strong> Ne pas attendre. Déclaration AT obligatoire même si risque paraît faible.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 1 : STRESS & TRAUMA ══ -->
+<div id="tab-1" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">L'ambulancier est exposé à des situations traumatiques répétées. Reconnaître les signes d'épuisement et de stress post-traumatique, c'est protéger sa santé et sa carrière.</p>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">😰</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--red)">Stress aigu post-intervention</div>
+        <div class="realite-sub">Normal — comment le gérer</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <p>Après une intervention difficile (décès d'enfant, AVP grave, violence), des réactions immédiates sont normales et attendues :</p>
+      <ul>
+        <li>Tremblements, tachycardie, sueurs après l'intervention — réaction adrénergique normale</li>
+        <li>Replay mental involontaire des images dans les heures suivantes</li>
+        <li>Difficultés d'endormissement la nuit post-garde</li>
+        <li>Irritabilité transitoire avec l'entourage</li>
+      </ul>
+      <div class="info-box"><strong>Ces réactions sont normales dans les 48-72h.</strong> Parler à l'équipier, debriefing informel, activité physique. Si persistance au-delà de 4 semaines → consulter.</div>
+    </div>
+  </div>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🧨</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--violet)">TSPT — Trouble Stress Post-Traumatique</div>
+        <div class="realite-sub">Reconnaître — briser le silence</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <p>Le TSPT touche <strong>15 à 20% des ambulanciers</strong> en activité. Il peut survenir après un événement unique ou s'installer progressivement après des années d'exposition.</p>
+      <ul>
+        <li>Flashbacks intrusifs — reviviscences involontaires diurnes ou nocturnes</li>
+        <li>Évitement des situations rappelant le trauma (refus de certaines interventions)</li>
+        <li>Hypervigilance permanente — sursauts, irritabilité, sommeil fragmenté</li>
+        <li>Émoussement affectif — détachement, perte d'intérêt, sentiment d'être "vide"</li>
+        <li>Consommation d'alcool ou de substances pour "éteindre" les images</li>
+      </ul>
+      <div class="alerte-box"><strong>Le TSPT ne se soigne pas seul.</strong> Psychologue spécialisé trauma, EMDR, thérapie cognitive. En parler = acte de courage, pas de faiblesse. Des dispositifs existent dans la plupart des entreprises de transport sanitaire.</div>
+    </div>
+  </div>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🔥</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--amber)">Burn-out ambulancier</div>
+        <div class="realite-sub">Épuisement progressif — signaux d'alarme</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <ul>
+        <li>Désengagement progressif — "faire le minimum" sans plus s'investir</li>
+        <li>Cynisme envers les patients — signe d'épuisement émotionnel avancé</li>
+        <li>Erreurs répétées — fatigue attentionnelle chronique</li>
+        <li>Isolement social — ne plus voir les collègues en dehors du travail</li>
+        <li>Somatisation — douleurs diffuses, troubles digestifs, céphalées chroniques</li>
+      </ul>
+      <div class="violet-box"><strong>Ressources disponibles :</strong> médecin du travail (confidentiel), psychologue du travail, Croix-Rouge Écoute (0 800 858 858), associations de soutien aux ambulanciers.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 : NUITS & GARDES ══ -->
+<div id="tab-2" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le travail en horaires décalés et les gardes de nuit ont des effets physiologiques documentés. Les connaître permet de mieux les gérer.</p>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">🌙</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--em)">Effets du travail de nuit</div>
+        <div class="realite-sub">Physiologie du travail posté</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <ul>
+        <li>Désynchronisation circadienne — horloge biologique perturbée après 3 nuits consécutives</li>
+        <li>Risque cardiovasculaire augmenté de 40% chez les travailleurs de nuit chroniques</li>
+        <li>Troubles du sommeil : dette de sommeil cumulée, insomnie de récupération</li>
+        <li>Risque d'accidents de trajet multiplié par 3 après une nuit blanche</li>
+        <li>Irritabilité, troubles de la concentration — pic de risque entre 3h et 5h du matin</li>
+      </ul>
+      <div class="amber-box"><strong>Dormir avant une garde de nuit</strong> (sieste de 20 min en fin d'après-midi) divise par 2 le risque d'erreur en fin de garde. C'est une technique validée, pas de la paresse.</div>
+    </div>
+  </div>
+
+  <div class="realite-card">
+    <div class="realite-header" onclick="toggleR(this)">
+      <div class="realite-icon">☕</div>
+      <div class="realite-info">
+        <div class="realite-name" style="color:var(--orange)">Stratégies pratiques</div>
+        <div class="realite-sub">Ce qui fonctionne vraiment</div>
+      </div>
+    </div>
+    <div class="realite-body">
+      <ul>
+        <li>Caféine : efficace si prise stratégique — pas après 3h du matin (perturbe récupération)</li>
+        <li>Alimentation légère en garde — repas lourd = somnolence garantie</li>
+        <li>Lumière vive en début de garde — maintient l'éveil</li>
+        <li>Obscurité totale pour le sommeil de récupération — rideaux opaques</li>
+        <li>Récupération post-garde : ne pas conduire si + de 24h sans sommeil</li>
+        <li>Activité physique régulière — améliore la qualité du sommeil de récupération</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="info-box"><strong>Droit au repos :</strong> la réglementation impose un repos minimum de 11h consécutives entre deux prises de service. Ne pas hésiter à invoquer ce droit si la direction planifie des gardes non réglementaires.</div>
+</div>
+
+<!-- ══ TAB 3 : CADRE LÉGAL ══ -->
+<div id="tab-3" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">L'ambulancier exerce dans un cadre légal précis. Connaître ses droits et obligations protège le patient et l'ambulancier.</p>
+
+  <div class="loi-card">
+    <div class="loi-title" style="color:var(--em)">📜 Secret professionnel</div>
+    <div class="loi-ref">Art. 226-13 Code pénal · Art. L.1110-4 CSP</div>
+    <div class="loi-desc">L'ambulancier est tenu au secret professionnel. <strong>Toute information sur l'état de santé du patient est confidentielle.</strong> Partager des informations sur un patient avec des tiers non médicaux (famille non autorisée, curieux, réseaux sociaux) est une infraction pénale.</div>
+  </div>
+
+  <div class="loi-card">
+    <div class="loi-title" style="color:var(--amber)">🚨 Obligation de porter secours</div>
+    <div class="loi-ref">Art. 223-6 Code pénal</div>
+    <div class="loi-desc"><strong>Toute personne</strong> (et a fortiori un ambulancier) est tenue de porter secours à une personne en danger si elle peut le faire sans risque. <strong>Non-assistance à personne en danger</strong> est un délit passible de 5 ans d'emprisonnement et 75 000€ d'amende.</div>
+  </div>
+
+  <div class="loi-card">
+    <div class="loi-title" style="color:var(--orange)">🛡️ Responsabilité civile et pénale</div>
+    <div class="loi-ref">Code civil · Code pénal</div>
+    <div class="loi-desc">L'ambulancier engage sa responsabilité par ses actes professionnels. <strong>Agir dans le cadre de ses compétences</strong> et des protocoles validés par le médecin régulateur est la meilleure protection. Tout acte hors protocole non validé = faute professionnelle potentielle.</div>
+  </div>
+
+  <div class="loi-card">
+    <div class="loi-title" style="color:var(--violet)">📋 Consentement et refus de soins</div>
+    <div class="loi-ref">Art. L.1111-4 CSP</div>
+    <div class="loi-desc">Tout patient majeur et conscient peut <strong>refuser d'être transporté</strong>. En cas de refus : informer clairement des risques, faire signer une décharge si possible, informer le SAMU-15. <strong>Ne jamais transporter un patient conscient contre sa volonté</strong> — c'est une séquestration.</div>
+  </div>
+
+  <div class="alerte-box"><strong>Réseaux sociaux :</strong> toute photo ou vidéo d'une intervention est strictement interdite, même sans identifier le patient. Le respect de la dignité de la personne et du secret professionnel s'appliquent en toutes circonstances.</div>
+</div>
+
+<!-- ══ TAB 4 : QUIZ ══ -->
+<div id="tab-4" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+var prenom = localStorage.getItem('praxisambu_prenom') || 'Ambulancier';
+document.getElementById('prenom-display').textContent = prenom;
+
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===n); });
+  for(var i=0;i<5;i++) document.getElementById('tab-'+i).style.display = i===n?'block':'none';
+  tabActif = n; window.scrollTo(0,0);
+  if(n===4 && !quizInit) initQuiz();
+  stopAudio();
+}
+function toggleR(h){ h.nextElementSibling.classList.toggle('open'); }
+
+var quizInit=false, scoreOk=0, repondu=[];
+var QUESTIONS=[
+  {q:"Quelle est la 1ère cause d'arrêt de travail chez les ambulanciers ?",opts:["Accidents de la route","Troubles Musculo-Squelettiques (TMS)","Stress post-traumatique","Maladies infectieuses"],ok:1,exp:"Les TMS représentent la première cause d'arrêt de travail dans la profession ambulancière. Le rachis lombaire est la zone la plus touchée, suivi des épaules et des genoux."},
+  {q:"En cas d'Accident d'Exposition au Sang (AES), quelle est la première action ?",opts:["Appeler le SAMU immédiatement","Rinçage immédiat pendant 5 minutes puis déclaration AT dans les 24h","Attendre les résultats de sérologie du patient","Mettre un pansement et continuer l'intervention"],ok:1,exp:"L'AES nécessite un rinçage immédiat abondant pendant 5 minutes, puis une déclaration d'accident du travail dans les 24h et une consultation urgente en médecin du travail. Ne jamais attendre."},
+  {q:"Après combien de semaines des symptômes de stress post-traumatique doivent-ils faire consulter ?",opts:["48 heures","1 semaine","4 semaines","3 mois"],ok:2,exp:"Des réactions de stress dans les 48-72h après une intervention difficile sont normales. Si les symptômes (flashbacks, évitement, hypervigilance) persistent au-delà de 4 semaines, une consultation spécialisée est nécessaire."},
+  {q:"Un patient conscient et majeur refuse d'être transporté. Que faites-vous ?",opts:["Le transporter de force pour son bien","Informer des risques, faire signer une décharge, appeler le SAMU","L'attacher sur le brancard","Appeler la police pour autorisation"],ok:1,exp:"Le refus de soins est un droit fondamental. L'ambulancier informe des risques, tente d'obtenir une décharge signée, contacte le SAMU-15 pour avis médical. Transporter un patient contre sa volonté est une séquestration — délit pénal."},
+  {q:"Quelle stratégie est validée pour réduire la somnolence en fin de garde de nuit ?",opts:["Boire du café toute la nuit","Sieste de 20 minutes en fin d'après-midi avant la garde","Sauter le repas du soir","Prendre des médicaments stimulants"],ok:1,exp:"La sieste préventive de 20 minutes (sieste flash) en fin d'après-midi avant une garde de nuit est une technique validée scientifiquement. Elle réduit significativement le risque d'erreur et d'accident en fin de garde."},
+  {q:"Le secret professionnel de l'ambulancier s'applique-t-il aux réseaux sociaux ?",opts:["Non — les photos publiques sont autorisées","Oui — toute photo d'intervention est interdite même sans identifier le patient","Oui — sauf si le patient a donné son accord verbal","Non — uniquement pour les informations médicales écrites"],ok:1,exp:"Le secret professionnel et le respect de la dignité s'appliquent en toutes circonstances, y compris sur les réseaux sociaux. Toute photo ou vidéo d'une intervention est strictement interdite, quelle que soit l'identifiabilité du patient."},
+  {q:"Quel est le risque principal pour un ambulancier qui conduit après une garde de nuit sans dormir ?",opts:["Risque d'AES augmenté","Risque d'accident de trajet multiplié par 3","Risque de TMS augmenté","Aucun risque particulier si la garde était calme"],ok:1,exp:"Après une nuit blanche, le risque d'accident de la route est multiplié par 3 — comparable à 0,8g d'alcool dans le sang. Ne jamais conduire après plus de 24h sans sommeil."},
+];
+
+function initQuiz(){
+  quizInit=true; scoreOk=0; repondu=new Array(QUESTIONS.length).fill(false);
+  document.getElementById('quiz-zone').innerHTML=QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'"><div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div><div class="quiz-options">'+
+      q.opts.map(function(o,oi){ return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>'; }).join('')+
+      '</div><div class="quiz-feedback" id="fb-'+qi+'"></div></div>';
+  }).join('');
+}
+
+function repondre(qi,oi){
+  if(repondu[qi]) return; repondu[qi]=true;
+  var q=QUESTIONS[qi];
+  document.querySelectorAll('#qq-'+qi+' .quiz-opt').forEach(function(o){ o.disabled=true; });
+  var fb=document.getElementById('fb-'+qi);
+  if(oi===q.ok){ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('correct'); fb.className='quiz-feedback show ok'; fb.textContent='✅ '+q.exp; scoreOk++; }
+  else{ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('wrong'); document.querySelectorAll('#qq-'+qi+' .quiz-opt')[q.ok].classList.add('correct'); fb.className='quiz-feedback show ko'; fb.textContent='❌ '+q.exp; }
+  if(repondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display='block';
+      document.getElementById('score-num').textContent=scoreOk+'/'+QUESTIONS.length;
+      var p=scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent=p===1?'🏆 Parfait '+prenom+' — tu connais tes droits et ta santé !':p>=.7?'👍 Bon résultat.':'📖 Prends soin de toi — ces connaissances protègent ta carrière.';
+    },400);
+  }
+}
+
+var AUDIO=[
+  "TMS et santé au travail. Les troubles musculo-squelettiques sont la première cause d'arrêt de travail chez les ambulanciers. Dos, épaules, genoux — zones prioritaires. Règles d'or : dos droit, genoux fléchis, charge proche du corps. Aides techniques systématiques. En cas d'AES, rinçage immédiat 5 minutes et déclaration accident du travail dans les 24 heures.",
+  "Stress et trauma. Les réactions dans les 48-72 heures après une intervention difficile sont normales. Au-delà de 4 semaines : consulter. Le TSPT touche 15 à 20% des ambulanciers. Parler à l'équipier, débriefing, psychologue spécialisé trauma. Le silence aggrave, la parole protège.",
+  "Nuits et gardes. Le travail de nuit désynchronise l'horloge biologique. Risque cardiovasculaire augmenté. Sieste de 20 minutes avant une garde de nuit — technique validée scientifiquement. Ne jamais conduire après plus de 24 heures sans sommeil — risque d'accident multiplié par 3.",
+  "Cadre légal. Secret professionnel absolu — toute information sur l'état du patient est confidentielle, y compris sur les réseaux sociaux. Obligation de porter secours — non-assistance est un délit. Agir dans le cadre des protocoles validés par le médecin régulateur. Refus de soins = droit du patient — ne jamais transporter contre la volonté.",
+  "Quiz réalités du métier. 7 questions sur la santé, le droit et le bien-être de l'ambulancier. Prends soin de toi "+prenom+"."
+];
+
+var synth=window.speechSynthesis, audioOn=false;
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn=true; document.getElementById('audio-btn').textContent='⏹';
+  var u=new SpeechSynthesisUtterance(AUDIO[tabActif]);
+  u.lang='fr-FR'; u.rate=0.92;
+  var v=synth.getVoices().filter(function(x){ return x.lang.startsWith('fr'); });
+  if(v.length) u.voice=v[0];
+  u.onend=function(){ audioOn=false; document.getElementById('audio-btn').textContent='🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
