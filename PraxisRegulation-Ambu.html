@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisRégulation · SAMU-15 & Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#22c55e;--em2:#14532d;--red:#ef4444;--blue:#3b82f6;--amber:#f59e0b;--orange:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+.module-header{background:linear-gradient(135deg,#051a0a,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(34,197,94,.2)}
+
+/* SBAR blocs */
+.sbar-block{border-radius:12px;padding:14px;margin-bottom:10px}
+.sbar-letter{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;float:left;margin-right:10px;line-height:1}
+.sbar-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;margin-bottom:4px}
+.sbar-content{font-size:13px;line-height:1.7;clear:both}
+.sbar-content strong{color:var(--txt)}
+
+/* Radio box */
+.radio-box{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:12px;padding:16px;margin:12px 0}
+.radio-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--em);letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.radio-script{font-size:13px;color:var(--txt);line-height:1.8;font-style:italic}
+.radio-script strong{color:var(--em);font-style:normal}
+
+/* Acteurs */
+.acteur-card{background:var(--card);border:1.5px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:10px}
+.acteur-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;margin-bottom:6px}
+.acteur-desc{font-size:13px;color:var(--txt2);line-height:1.65}
+.acteur-desc strong{color:var(--txt)}
+
+/* Simulation radio interactive */
+.sim-wrap{border:1.5px solid rgba(34,197,94,.3);border-radius:14px;overflow:hidden;margin:16px 0}
+.sim-header{background:rgba(34,197,94,.1);padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--em);display:flex;align-items:center;gap:8px}
+.sim-message{padding:12px 14px;border-bottom:1px solid var(--bdr);font-size:13px;line-height:1.6}
+.sim-message.samu{background:rgba(59,130,246,.06);color:#93c5fd}
+.sim-message.ambu{color:var(--txt)}
+.sim-speaker{font-family:var(--mono);font-size:9px;letter-spacing:2px;margin-bottom:4px;opacity:.7}
+
+/* Checklist */
+.checklist{margin:10px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--bdr);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.check-box.checked{background:var(--em);border-color:var(--em)}
+.check-box.checked::after{content:'✓';color:#0d0f0a;font-size:12px;font-weight:800}
+.check-label{font-size:13px;color:var(--txt);line-height:1.5;flex:1}
+.check-label.checked{color:var(--txt2);text-decoration:line-through}
+
+.alerte-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fca5a5;line-height:1.6}
+.info-box{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#93c5fd;line-height:1.6}
+.amber-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fcd34d;line-height:1.6}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:var(--em);color:var(--em)}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:var(--em)}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--red)}
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(34,197,94,.4)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">📡 PraxisRégulation</div>
+    <div class="module-badge">BC3 · SAMU-15 & COMMUNICATION</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(0)">🏥 Le SAMU</div>
+    <div class="tab" onclick="setTab(1)">📋 SBAR ambulancier</div>
+    <div class="tab" onclick="setTab(2)">📡 Simulation radio</div>
+    <div class="tab" onclick="setTab(3)">⚖️ Régulation médicale</div>
+    <div class="tab" onclick="setTab(4)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ TAB 0 : LE SAMU ══ -->
+<div id="tab-0">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le SAMU (Service d'Aide Médicale Urgente) coordonne les secours médicaux. L'ambulancier est un maillon essentiel de cette chaîne — sa transmission conditionne la réponse médicale.</p>
+
+  <div class="section-title">Les acteurs du SAMU-15</div>
+
+  <div class="acteur-card">
+    <div class="acteur-title" style="color:var(--blue)">🎧 ARM — Assistant de Régulation Médicale</div>
+    <div class="acteur-desc">Premier décroché du 15. <strong>Triage des appels</strong>, recueil des informations de localisation et de nature de l'urgence. Décide du transfert vers le médecin régulateur ou de l'envoi direct de secours. Pas de formation médicale — formation spécifique ARM.</div>
+  </div>
+
+  <div class="acteur-card">
+    <div class="acteur-title" style="color:var(--em)">👨‍⚕️ Médecin régulateur</div>
+    <div class="acteur-desc">Médecin urgentiste en permanence au CRRA (Centre de Réception et de Régulation des Appels). <strong>Décide de la réponse médicale</strong> : conseil téléphonique, envoi ambulance, SMUR, ou autre. C'est lui que l'ambulancier contacte pour le bilan et les demandes de médicalisation.</div>
+  </div>
+
+  <div class="acteur-card">
+    <div class="acteur-title" style="color:var(--orange)">🚑 SMUR — Service Mobile d'Urgence et de Réanimation</div>
+    <div class="acteur-desc">Équipe médicalisée (médecin + infirmier + ambulancier SMUR) envoyée sur décision du médecin régulateur. <strong>Prend en charge les urgences vitales</strong> sur place avant le transport. L'ambulancier DEA peut être amené à travailler avec le SMUR.</div>
+  </div>
+
+  <div class="acteur-card">
+    <div class="acteur-title" style="color:var(--amber)">🚒 15-18-17 — Numéros d'urgence</div>
+    <div class="acteur-desc"><strong>15</strong> : SAMU (urgences médicales) · <strong>18</strong> : Pompiers (incendie, secours) · <strong>17</strong> : Police/Gendarmerie · <strong>112</strong> : numéro européen unique · <strong>15-18 interconnectés</strong> : transfert automatique entre centres selon la nature.</div>
+  </div>
+
+  <div class="section-title">Organisation du CRRA</div>
+  <div class="info-box">Le CRRA (Centre 15) fonctionne 24h/24. L'ambulancier compose le 15 dès l'arrivée sur les lieux si pas encore contacté. La communication radio se fait sur fréquence dédiée selon le département. Toujours s'identifier : numéro de l'ambulance, nom, localisation précise.</div>
+</div>
+
+<!-- ══ TAB 1 : SBAR ══ -->
+<div id="tab-1" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le <strong style="color:var(--em)">SBAR ambulancier</strong> est la trame de transmission standardisée. Elle garantit que le médecin régulateur reçoit toutes les informations dans le bon ordre pour décider.</p>
+
+  <div class="sbar-block" style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2)">
+    <div class="sbar-letter" style="color:var(--red)">S</div>
+    <div class="sbar-title" style="color:var(--red)">Situation</div>
+    <div class="sbar-content" style="color:var(--txt2)">
+      Qui appelle · Quelle ambulance · Où · Quoi<br>
+      <strong>"SAMU 15, ambulance [numéro], intervention sur [lieu précis], pour [motif]."</strong>
+    </div>
+  </div>
+
+  <div class="sbar-block" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2)">
+    <div class="sbar-letter" style="color:var(--amber)">B</div>
+    <div class="sbar-title" style="color:var(--amber)">Bilan</div>
+    <div class="sbar-content" style="color:var(--txt2)">
+      Âge · Sexe · Mécanisme · GCS (Y+M+V) · Constantes complètes · Lésions identifiées<br>
+      <strong>Ordre : neurologique → respiratoire → circulatoire → lésions</strong>
+    </div>
+  </div>
+
+  <div class="sbar-block" style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2)">
+    <div class="sbar-letter" style="color:var(--blue)">A</div>
+    <div class="sbar-title" style="color:var(--blue)">Actions</div>
+    <div class="sbar-content" style="color:var(--txt2)">
+      Gestes réalisés · Matériel posé · Évolution depuis la prise en charge<br>
+      <strong>"O2 en cours, garrot posé à [heure], immobilisation rachis assurée."</strong>
+    </div>
+  </div>
+
+  <div class="sbar-block" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2)">
+    <div class="sbar-letter" style="color:var(--em)">R</div>
+    <div class="sbar-title" style="color:var(--em)">Recommandation</div>
+    <div class="sbar-content" style="color:var(--txt2)">
+      Demande explicite · Médicalisation · Destination · Délai estimé<br>
+      <strong>"Demande de médicalisation urgente — polytraumatisé grave. Quelle orientation ?"</strong>
+    </div>
+  </div>
+
+  <div class="section-title">Constantes à transmettre systématiquement</div>
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">GCS détaillé : Y + M + V (ex. Y2 M5 V1 = 8)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Pression artérielle systolique et diastolique</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Fréquence cardiaque</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">SpO2 (avec ou sans O2 — préciser)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Fréquence respiratoire</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Température si disponible</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Glycémie capillaire si pertinent</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2 : SIMULATION RADIO ══ -->
+<div id="tab-2" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Simulation de la transmission radio complète pour notre patient AVP moto. Lis le script à voix haute — c'est la meilleure façon de mémoriser la trame SBAR.</p>
+
+  <div class="sim-wrap">
+    <div class="sim-header">📡 Transmission radio — AVP moto RD112</div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER</div>
+      <strong>"SAMU 15, ici ambulance Gamma 3, intervention sur RD112, commune de Restincourt — AVP moto. Vous m'entendez ?"</strong>
+    </div>
+
+    <div class="sim-message samu">
+      <div class="sim-speaker">📞 MÉDECIN RÉGULATEUR</div>
+      "Gamma 3, je vous reçois 5 sur 5. Donnez votre bilan."
+    </div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER — S (Situation)</div>
+      <strong>"Victime unique — homme, 35 ans environ, conducteur de moto, choc frontal contre glissière à haute cinétique. Casque retiré par des témoins à notre arrivée."</strong>
+    </div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER — B (Bilan)</div>
+      <strong>"GCS 8 — Y2 M5 V1. PA 72 sur 40, FC 124, SpO2 88% sous O2 15 litres masque haute concentration, FR 28, température 36°C.<br><br>
+      Lésions : fracture fémur gauche avec hématome massif — tableau de choc hémorragique. Asymétrie thoracique gauche, murmure vésiculaire diminué à gauche — pneumothorax suspecté. Fracture radius droit. Plaie scalp saignante. Trauma rachis cervical suspecté — collier en place."</strong>
+    </div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER — A (Actions)</div>
+      <strong>"Actions réalisées : O2 haute concentration en cours, immobilisation rachis assurée, garrot CAT posé cuisse gauche à 15h51 — saignement contrôlé. Monitoring continu. Couverture de survie posée."</strong>
+    </div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER — R (Recommandation)</div>
+      <strong>"Demande de médicalisation urgente — polytraumatisé grave avec choc hémorragique et pneumothorax suspecté. Délai estimé sur place : 8 minutes. Quelle orientation, Docteur ?"</strong>
+    </div>
+
+    <div class="sim-message samu">
+      <div class="sim-speaker">📞 MÉDECIN RÉGULATEUR</div>
+      "Bien reçu Gamma 3. SMUR en route — ETA 6 minutes. Maintenez O2 et monitoring. Orientation CHU trauma center. Ne bougez pas le patient avant l'arrivée du SMUR. Rappel si aggravation."
+    </div>
+
+    <div class="sim-message ambu">
+      <div class="sim-speaker">🚑 AMBULANCIER</div>
+      <strong>"Reçu Docteur — SMUR attendu 6 minutes, orientation CHU, patient maintenu sur place. Gamma 3 terminé."</strong>
+    </div>
+  </div>
+
+  <div class="amber-box"><strong>Règle d'or :</strong> toujours accuser réception des ordres du médecin régulateur en répétant les informations clés. "Reçu — SMUR dans 6 minutes, CHU, patient stabilisé." Jamais de "ouais" ou de silence.</div>
+</div>
+
+<!-- ══ TAB 3 : RÉGULATION MÉDICALE ══ -->
+<div id="tab-3" style="display:none">
+  <div class="section-title">Niveaux de réponse du SAMU</div>
+
+  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--em);margin-bottom:4px">R1 — Conseil téléphonique</div>
+      <div style="font-size:12.5px;color:var(--txt2);line-height:1.6">Situation non urgente, patient ambulatoire. Le médecin donne des conseils sans envoi de secours.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--amber);margin-bottom:4px">R2 — Ambulance non médicalisée</div>
+      <div style="font-size:12.5px;color:var(--txt2);line-height:1.6">Urgence relative — transport vers les urgences sans médicalisation sur place. L'ambulancier DEA assure la surveillance.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--orange);margin-bottom:4px">R3 — VSAV (Pompiers)</div>
+      <div style="font-size:12.5px;color:var(--txt2);line-height:1.6">Secours à personne — pompiers paramédicaux avec matériel de réanimation de base.</div>
+    </div>
+    <div style="background:var(--card);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:12px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:var(--red);margin-bottom:4px">R4 — SMUR (médicalisation)</div>
+      <div style="font-size:12.5px;color:var(--txt2);line-height:1.6">Urgence vitale — médecin urgentiste + IADE sur place. Notre patient AVP moto → R4 obligatoire.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Protocoles ambulancier DEA</div>
+  <div class="info-box">L'ambulancier DEA peut réaliser certains actes sur protocole signé par le médecin régulateur : administration d'O2, aspiration trachéale, pose de voie veineuse dans certains départements, utilisation du DEA. <strong>Toujours valider avec le médecin régulateur avant tout acte médicamenteux.</strong></div>
+
+  <div class="section-title">Obligation de transmission</div>
+  <div class="alerte-box">
+    <strong>Tout bilan doit être transmis au SAMU-15</strong> dès l'arrivée sur les lieux si pas encore fait. Le médecin régulateur est le seul à décider de l'orientation. L'ambulancier ne choisit pas seul la destination — sauf urgence absolue (ACR, détresse vitale immédiate sans SAMU joignable).
+  </div>
+
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">SAMU-15 contacté dès l'arrivée sur les lieux</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Bilan transmis en SBAR complet</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Demande médicale explicite formulée</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Ordres du médecin régulateur accusés réception</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Destination confirmée par le régulateur</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Rappel SAMU si aggravation pendant transport</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 : QUIZ ══ -->
+<div id="tab-4" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+var prenom = localStorage.getItem('praxisambu_prenom') || 'Ambulancier';
+document.getElementById('prenom-display').textContent = prenom;
+
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===n); });
+  for(var i=0;i<5;i++) document.getElementById('tab-'+i).style.display = i===n?'block':'none';
+  tabActif = n; window.scrollTo(0,0);
+  if(n===4 && !quizInit) initQuiz();
+  stopAudio();
+}
+function toggleCheck(b){ b.classList.toggle('checked'); b.nextElementSibling.classList.toggle('checked'); }
+
+var quizInit=false, scoreOk=0, repondu=[];
+var QUESTIONS=[
+  {q:"Quelle est la trame de transmission standardisée utilisée par l'ambulancier au SAMU-15 ?",opts:["ABCDE","SBAR","OPQRST","CIAMPEDS"],ok:1,exp:"Le SBAR (Situation — Bilan — Actions — Recommandation) est la trame standardisée de transmission médicale. Elle garantit une communication structurée et exhaustive avec le médecin régulateur."},
+  {q:"Qui décide de l'orientation et de la destination du patient pris en charge par l'ambulancier ?",opts:["L'ambulancier selon son évaluation","Le patient ou sa famille","Le médecin régulateur du SAMU-15","Le chef de bord de l'équipage"],ok:2,exp:"Le médecin régulateur du SAMU-15 est le seul décisionnaire de l'orientation. L'ambulancier ne choisit jamais seul la destination, sauf urgence absolue sans possibilité de contact avec le SAMU."},
+  {q:"Dans le SBAR, dans quel ordre sont transmises les constantes du bilan neurologique ?",opts:["SpO2 → PA → GCS","GCS (Y+M+V) en premier, puis respiratoire, puis circulatoire","PA → FC → GCS","Température → GCS → SpO2"],ok:1,exp:"La transmission suit l'ordre de gravité : neurologique (GCS détaillé Y+M+V) → respiratoire (FR, SpO2) → circulatoire (PA, FC). C'est l'ordre du bilan primaire ABCDE retranscrit en transmission."},
+  {q:"Quel niveau de réponse SAMU correspond à l'envoi d'une équipe SMUR médicalisée ?",opts:["R1","R2","R3","R4"],ok:3,exp:"R4 correspond à la médicalisation sur place par le SMUR (médecin urgentiste + IADE). C'est la réponse indiquée pour les urgences vitales comme notre polytraumatisé AVP moto."},
+  {q:"Comment doit-on accuser réception d'un ordre du médecin régulateur ?",opts:["Un simple 'OK' suffit","En répétant les informations clés de l'ordre reçu","Par un silence qui signifie accord","En demandant confirmation écrite"],ok:1,exp:"L'accusé réception doit répéter les informations clés : 'Reçu Docteur — SMUR dans 6 minutes, orientation CHU, patient maintenu sur place.' Cette répétition évite les erreurs de compréhension."},
+  {q:"L'ARM (Assistant de Régulation Médicale) est-il un médecin ?",opts:["Oui, urgentiste de permanence","Non, c'est un professionnel avec formation spécifique ARM","Oui, interne en médecine d'urgence","Non, c'est un pompier détaché"],ok:1,exp:"L'ARM n'est pas médecin — il a une formation spécifique dédiée à la régulation des appels d'urgence. Il fait le premier triage et transfère vers le médecin régulateur les cas nécessitant une décision médicale."},
+  {q:"Quand faut-il rappeler le SAMU-15 pendant un transport ?",opts:["Toutes les 5 minutes systématiquement","Uniquement à l'arrivée à l'hôpital","En cas d'aggravation ou de modification significative de l'état du patient","Jamais — la décision initiale suffit"],ok:2,exp:"Le SAMU doit être rappelé en cas d'aggravation ou de modification significative pendant le transport (chute du GCS, arrêt cardiaque, aggravation du choc). Le médecin régulateur peut alors modifier la destination ou envoyer le SMUR à la rencontre."},
+];
+
+function initQuiz(){
+  quizInit=true; scoreOk=0; repondu=new Array(QUESTIONS.length).fill(false);
+  document.getElementById('quiz-zone').innerHTML=QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'"><div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div><div class="quiz-options">'+
+      q.opts.map(function(o,oi){ return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>'; }).join('')+
+      '</div><div class="quiz-feedback" id="fb-'+qi+'"></div></div>';
+  }).join('');
+}
+
+function repondre(qi,oi){
+  if(repondu[qi]) return; repondu[qi]=true;
+  var q=QUESTIONS[qi];
+  document.querySelectorAll('#qq-'+qi+' .quiz-opt').forEach(function(o){ o.disabled=true; });
+  var fb=document.getElementById('fb-'+qi);
+  if(oi===q.ok){ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('correct'); fb.className='quiz-feedback show ok'; fb.textContent='✅ '+q.exp; scoreOk++; }
+  else{ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('wrong'); document.querySelectorAll('#qq-'+qi+' .quiz-opt')[q.ok].classList.add('correct'); fb.className='quiz-feedback show ko'; fb.textContent='❌ '+q.exp; }
+  if(repondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display='block';
+      document.getElementById('score-num').textContent=scoreOk+'/'+QUESTIONS.length;
+      var p=scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent=p===1?'🏆 Parfait '+prenom+' — tu maîtrises la régulation !':p>=.7?'👍 Bon résultat.':'📖 La trame SBAR s\'automatise avec la pratique.';
+    },400);
+  }
+}
+
+var AUDIO=[
+  "Le SAMU. Le Centre 15 coordonne les secours médicaux. Trois acteurs principaux : l'ARM fait le premier triage, le médecin régulateur décide de la réponse médicale, le SMUR intervient sur les urgences vitales. L'ambulancier DEA est un maillon essentiel de cette chaîne — sa transmission conditionne toute la réponse médicale.",
+  "SBAR ambulancier. Situation : qui, où, quoi. Bilan : GCS en premier Y M V, puis constantes respiratoires, puis circulatoires, puis lésions. Actions : gestes réalisés, matériel posé. Recommandation : demande explicite de médicalisation ou d'orientation. Toujours dans cet ordre.",
+  "Simulation radio. Écoute attentivement la transmission complète pour notre patient AVP moto. Lis le script à voix haute — c'est la meilleure façon d'automatiser la trame SBAR. Toujours accuser réception des ordres du médecin régulateur en répétant les informations clés.",
+  "Régulation médicale. Quatre niveaux de réponse : R1 conseil téléphonique, R2 ambulance non médicalisée, R3 pompiers VSAV, R4 SMUR médicalisé. Notre patient polytraumatisé → R4 obligatoire. Le médecin régulateur est le seul décisionnaire de l'orientation. Rappel SAMU obligatoire en cas d'aggravation pendant le transport.",
+  "Quiz régulation et SAMU-15. 7 questions. Bonne chance "+prenom+"."
+];
+
+var synth=window.speechSynthesis, audioOn=false;
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn=true; document.getElementById('audio-btn').textContent='⏹';
+  var u=new SpeechSynthesisUtterance(AUDIO[tabActif]);
+  u.lang='fr-FR'; u.rate=0.92;
+  var v=synth.getVoices().filter(function(x){ return x.lang.startsWith('fr'); });
+  if(v.length) u.voice=v[0];
+  u.onend=function(){ audioOn=false; document.getElementById('audio-btn').textContent='🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
