@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisAmbulancier · Stats Formateur</title>
+<style>
+:root{--bg:#0d0f0a;--bg2:#0f1208;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);--txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;--em:#f97316;--green:#22c55e;--blue:#3b82f6;--violet:#a855f7;--red:#ef4444;--amber:#f59e0b;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:linear-gradient(160deg,var(--bg),var(--bg2));color:var(--txt);font-family:-apple-system,sans-serif;min-height:100vh;padding:20px 16px 60px}
+.wrap{max-width:680px;margin:0 auto}
+/* Login */
+.login-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:28px;max-width:320px;margin:80px auto;text-align:center}
+.login-card h2{font-family:sans-serif;font-size:18px;font-weight:800;color:var(--em);margin-bottom:16px}
+.login-input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--bdr);background:rgba(255,255,255,.05);color:var(--txt);font-size:14px;margin-bottom:10px;text-align:center;letter-spacing:2px}
+.login-btn{width:100%;padding:11px;border-radius:8px;background:linear-gradient(135deg,#c2410c,var(--em));border:none;color:#0d0f0a;font-weight:800;font-size:14px;cursor:pointer}
+/* Header */
+h1{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--em)}
+.sub{color:var(--txt2);font-size:12px;margin-bottom:20px;font-family:var(--mono)}
+/* Stats grille */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:20px}
+@media(min-width:480px){.stats-grid{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;text-align:center}
+.stat-v{font-size:24px;font-weight:800;display:block;margin-bottom:2px}
+.stat-l{font-size:10px;color:var(--txt2);letter-spacing:.5px}
+/* Section */
+.section-title{font-size:12px;font-weight:700;color:var(--txt2);letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px}
+/* Module bars */
+.module-bar{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;margin-bottom:8px}
+.module-name{font-size:13px;font-weight:700;color:var(--txt);margin-bottom:6px;display:flex;justify-content:space-between}
+.bar-wrap{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+/* Niveau doughnut simple */
+.niveau-wrap{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+.niveau-card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:14px;text-align:center}
+.niveau-val{font-size:28px;font-weight:800;display:block}
+.niveau-label{font-size:11px;color:var(--txt2);margin-top:4px}
+/* Avis récents */
+.avis-mini{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:12px;margin-bottom:8px}
+.avis-stars{color:var(--amber);font-size:14px;margin-bottom:4px}
+.avis-module{font-size:12px;font-weight:700;color:var(--em)}
+.avis-comment{font-size:11.5px;color:var(--txt2);font-style:italic;margin-top:4px}
+/* Codes */
+.code-row{background:var(--card);border:1px solid var(--bdr);border-radius:8px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.code-name{font-family:var(--mono);font-size:11px;color:var(--em)}
+.code-usage{font-size:11px;color:var(--txt2)}
+.code-bar-wrap{width:80px;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:8px}
+.code-bar{height:100%;background:var(--em);border-radius:2px}
+/* Refresh */
+.refresh-btn{background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.25);color:var(--em);padding:7px 14px;border-radius:8px;font-size:12px;cursor:pointer;float:right;margin-top:-4px}
+.loading{text-align:center;padding:30px;color:var(--txt2);font-size:13px}
+</style>
+</head>
+<body>
+
+<div id="login-wrap">
+  <div class="login-card">
+    <h2>🚑 PraxisAmbulancier<br>Stats Formateur</h2>
+    <input type="password" class="login-input" id="pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()"/>
+    <button class="login-btn" onclick="login()">Accéder →</button>
+    <div id="login-err" style="color:#ef4444;font-size:11px;margin-top:8px;display:none">Mot de passe incorrect</div>
+  </div>
+</div>
+
+<div class="wrap" id="dash" style="display:none">
+  <h1>🚑 PraxisAmbulancier</h1>
+  <div class="sub" id="last-update">Chargement...</div>
+
+  <!-- Stats globales -->
+  <div class="stats-grid" id="stats-globales">
+    <div class="stat"><span class="stat-v" style="color:var(--em)">—</span><span class="stat-l">Sessions</span></div>
+    <div class="stat"><span class="stat-v" style="color:var(--blue)">—</span><span class="stat-l">Apprenants</span></div>
+    <div class="stat"><span class="stat-v" style="color:var(--green)">—</span><span class="stat-l">Avis reçus</span></div>
+    <div class="stat"><span class="stat-v" style="color:var(--amber)">—</span><span class="stat-l">Note moy.</span></div>
+  </div>
+
+  <!-- Répartition AA / DEA -->
+  <div class="section-title">Répartition AA / DEA <button class="refresh-btn" onclick="charger()">↻ Actualiser</button></div>
+  <div class="niveau-wrap" id="niveau-wrap">
+    <div class="niveau-card"><span class="niveau-val" style="color:var(--blue)">—</span><span class="niveau-label">Auxiliaires Ambulanciers</span></div>
+    <div class="niveau-card"><span class="niveau-val" style="color:var(--em)">—</span><span class="niveau-label">DEA complet</span></div>
+  </div>
+
+  <!-- Usage par module -->
+  <div class="section-title">Usage par module</div>
+  <div id="modules-zone"><div class="loading">Chargement...</div></div>
+
+  <!-- Codes démo -->
+  <div class="section-title">Codes démo — utilisation</div>
+  <div id="codes-zone"><div class="loading">Chargement...</div></div>
+
+  <!-- Avis récents -->
+  <div class="section-title">Derniers avis</div>
+  <div id="avis-zone"><div class="loading">Chargement...</div></div>
+</div>
+
+<script>
+var SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
+var SUPABASE_ANON = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+var PWD = 'PraxisAmbu2026';
+
+var MODULES = [
+  'PraxisBilan','PraxisGestes','PraxisInstallation',
+  'PraxisRégulation','PraxisRéalités','PraxisVéhicule'
+];
+var COLORS = ['#f97316','#ef4444','#f59e0b','#22c55e','#3b82f6','#0ea5e9'];
+
+function login(){
+  var v = document.getElementById('pwd').value;
+  if(v === PWD || v === 'MEDEXPERT-ADMIN'){
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('dash').style.display = 'block';
+    charger();
+    setInterval(charger, 2*60*1000);
+  } else {
+    document.getElementById('login-err').style.display = 'block';
+  }
+}
+
+async function charger(){
+  try {
+    var [rTracking, rAvis, rAbos] = await Promise.all([
+      fetch(SUPABASE_URL+'/rest/v1/praxis?app=eq.praxisambulancier&select=student_code,module,step,created_at', {
+        headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON}
+      }),
+      fetch(SUPABASE_URL+'/rest/v1/avis?app=eq.PraxisAmbulancier&select=*&order=id.desc&limit=20', {
+        headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON}
+      }),
+      fetch(SUPABASE_URL+'/rest/v1/abonnements?notes=like.DEMO-AMBU*&select=notes,temps_cumule_minutes,temps_max_minutes,annee_formation', {
+        headers:{apikey:SUPABASE_ANON,Authorization:'Bearer '+SUPABASE_ANON}
+      }),
+    ]);
+
+    var tracking = await rTracking.json();
+    var avis     = await rAvis.json();
+    var abos     = await rAbos.json();
+
+    renderStats(tracking, avis);
+    renderNiveau(tracking);
+    renderModules(tracking);
+    renderCodes(abos);
+    renderAvis(avis);
+
+    document.getElementById('last-update').textContent =
+      'Dernière mise à jour : ' + new Date().toLocaleString('fr-FR');
+
+  } catch(e){ console.error(e); }
+}
+
+function renderStats(tracking, avis){
+  var sessions   = tracking.filter(function(t){ return t.step==='ouverture'; }).length;
+  var apprenants = new Set(tracking.map(function(t){ return t.student_code; })).size;
+  var nbAvis     = avis.length;
+  var moyNote    = nbAvis ? (avis.reduce(function(s,a){ return s+(a.note||0); },0)/nbAvis).toFixed(1) : '—';
+
+  document.getElementById('stats-globales').innerHTML =
+    stat(sessions, 'Sessions', '--em') +
+    stat(apprenants, 'Apprenants', '--blue') +
+    stat(nbAvis, 'Avis reçus', '--green') +
+    stat(moyNote+' ★', 'Note moy.', '--amber');
+}
+
+function stat(v, l, col){
+  return '<div class="stat"><span class="stat-v" style="color:var('+col+')">'+v+'</span><span class="stat-l">'+l+'</span></div>';
+}
+
+function renderNiveau(tracking){
+  var logins = tracking.filter(function(t){ return t.step==='login' || t.module==='login'; });
+  var aa = tracking.filter(function(t){ return t.student_code && t.student_code.indexOf('AA')!==-1; }).length;
+  var dea = tracking.length - aa;
+  document.getElementById('niveau-wrap').innerHTML =
+    '<div class="niveau-card"><span class="niveau-val" style="color:var(--blue)">'+
+    new Set(tracking.filter(function(t){ return t.student_code && t.student_code.indexOf('-AA-')!==-1; }).map(function(t){ return t.student_code; })).size+
+    '</span><span class="niveau-label">Auxiliaires Ambulanciers</span></div>'+
+    '<div class="niveau-card"><span class="niveau-val" style="color:var(--em)">'+
+    new Set(tracking.filter(function(t){ return t.student_code && t.student_code.indexOf('-DEA-')!==-1; }).map(function(t){ return t.student_code; })).size+
+    '</span><span class="niveau-label">DEA complet</span></div>';
+}
+
+function renderModules(tracking){
+  var ouvertures = tracking.filter(function(t){ return t.step==='ouverture'; });
+  var counts = {};
+  MODULES.forEach(function(m){ counts[m]=0; });
+  ouvertures.forEach(function(t){
+    MODULES.forEach(function(m){
+      if(t.module && t.module.indexOf(m)!==-1) counts[m]++;
+    });
+  });
+  var max = Math.max.apply(null, Object.values(counts)) || 1;
+  document.getElementById('modules-zone').innerHTML = MODULES.map(function(m,i){
+    var pct = Math.round(counts[m]/max*100);
+    return '<div class="module-bar">'+
+      '<div class="module-name"><span>'+m+'</span><span style="color:'+COLORS[i]+'">'+counts[m]+' ouvertures</span></div>'+
+      '<div class="bar-wrap"><div class="bar-fill" style="width:'+pct+'%;background:'+COLORS[i]+'"></div></div>'+
+      '</div>';
+  }).join('');
+}
+
+function renderCodes(abos){
+  if(!abos || !abos.length){
+    document.getElementById('codes-zone').innerHTML = '<div class="loading">Aucun code démo</div>';
+    return;
+  }
+  document.getElementById('codes-zone').innerHTML = abos.map(function(a){
+    var cumule = a.temps_cumule_minutes || 0;
+    var max    = a.temps_max_minutes || 60;
+    var pct    = Math.min(100, Math.round(cumule/max*100));
+    var code   = (a.notes||'').split(' ')[0];
+    var col    = pct>=80 ? '#ef4444' : '#f97316';
+    return '<div class="code-row">'+
+      '<span class="code-name">'+code+'</span>'+
+      '<span class="code-usage" style="color:'+col+'">'+cumule+'/'+max+' min'+
+      '<span class="code-bar-wrap"><span class="code-bar" style="width:'+pct+'%;background:'+col+'"></span></span>'+
+      '</span>'+
+      '</div>';
+  }).join('');
+}
+
+function renderAvis(avis){
+  if(!avis || !avis.length){
+    document.getElementById('avis-zone').innerHTML = '<div class="loading">Aucun avis pour le moment.</div>';
+    return;
+  }
+  document.getElementById('avis-zone').innerHTML = avis.slice(0,5).map(function(a){
+    var stars = '';
+    for(var i=1;i<=5;i++) stars += i<=(a.note||0)?'★':'☆';
+    return '<div class="avis-mini">'+
+      '<div class="avis-stars">'+stars+'</div>'+
+      '<div class="avis-module">'+esc(a.module||'—')+'<span style="color:var(--txt2);font-size:10px;margin-left:8px">'+esc(a.promo||'')+'</span></div>'+
+      (a.commentaire?'<div class="avis-comment">'+esc(a.commentaire)+'</div>':'')+
+      '</div>';
+  }).join('');
+}
+
+function esc(s){ return (s||'').toString().replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+</script>
+</body>
+</html>
