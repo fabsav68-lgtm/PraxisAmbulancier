@@ -79,7 +79,7 @@ document.addEventListener('visibilitychange',function(){
 <div id="home">
   <nav>
     <div class="nav-logo">Praxis<span>Ambulancier</span></div>
-    <div class="nav-tag" id="nav-niveau">DEA 2021</div>
+    <div class="nav-tag" id="nav-niveau">DEA 2022</div>
   </nav>
 
   <!-- Hero SVG Ambulance -->
@@ -157,6 +157,15 @@ document.addEventListener('visibilitychange',function(){
       <div class="module-btn" style="background:rgba(34,197,94,.1);color:var(--bc4);border-color:rgba(34,197,94,.3)">Démarrer</div>
     </div>
 
+    <div class="module-card" id="card-bc6" onclick="ouvrirModule('PraxisVehicule-Ambu.html')" style="border-color:rgba(14,165,233,.25)">
+      <div class="module-num">BC3+BC4 · BLOC 6</div>
+      <div class="module-icon">🚑</div>
+      <div class="module-name" style="color:#0ea5e9">PraxisVéhicule</div>
+      <div class="module-sub">Transport & matériel</div>
+      <div class="module-desc">Contrôle VST, conduite sanitaire, hygiène DASRI, matériel A2.</div>
+      <div class="module-btn" style="background:rgba(14,165,233,.1);color:#0ea5e9;border-color:rgba(14,165,233,.3)">Démarrer</div>
+    </div>
+
     <div class="module-card full-width" id="card-bc5" onclick="ouvrirModule('PraxisRealites-Ambu.html')" style="border-color:rgba(59,130,246,.25)">
       <div class="module-num">BC4-BC5 · BLOC 5</div>
       <div class="module-icon">🧠</div>
@@ -169,7 +178,7 @@ document.addEventListener('visibilitychange',function(){
   </div>
 
   <footer>
-    PraxisAmbulancier · Référentiel DEA arrêté 26 janv. 2021 · MedExpert<br>
+    PraxisAmbulancier · Référentiel DEA arrêté 11 avr. 2022 · MedExpert<br>
     <a href="stats-ambu.html" style="color:rgba(255,255,255,.08);font-size:9px;text-decoration:none">accès formateur</a>
   </footer>
 </div>
@@ -191,7 +200,7 @@ function setNiveau(n){
   sessionStorage.setItem('praxisambu_niveau', n);
   document.getElementById('btn-aa').classList.toggle('active', n==='AA');
   document.getElementById('btn-dea').classList.toggle('active', n==='DEA');
-  document.getElementById('nav-niveau').textContent = n==='AA' ? 'Auxiliaire Amb.' : 'DEA 2021';
+  document.getElementById('nav-niveau').textContent = n==='AA' ? 'Auxiliaire Amb.' : 'DEA 2022';
   appliquerNiveau();
 }
 
