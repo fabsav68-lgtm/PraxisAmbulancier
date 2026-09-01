@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PraxisVéhicule · Transport sanitaire & matériel</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
+  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
+  --em:#0ea5e9;--em2:#0c4a6e;--red:#ef4444;--green:#22c55e;--amber:#f59e0b;--orange:#f97316;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+.module-header{background:linear-gradient(135deg,#050e1a,#0d0f0a);border-bottom:2px solid var(--em);padding:14px 16px;position:sticky;top:0;z-index:50}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.module-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--em);letter-spacing:-0.5px}
+.module-badge{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--txt2);background:rgba(255,255,255,.05);padding:3px 8px;border-radius:8px}
+.prenom-display{font-size:12px;color:var(--txt2);font-family:var(--mono)}
+.prenom-display span{color:var(--em)}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--bdr)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:10px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px;color:var(--txt2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--em);border-bottom-color:var(--em)}
+
+.content{max-width:640px;margin:0 auto;padding:20px 16px 80px}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:var(--em);letter-spacing:.5px;margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:rgba(14,165,233,.2)}
+
+.fiche{background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.fiche-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer}
+.fiche-icon{font-size:26px;flex-shrink:0}
+.fiche-info{flex:1}
+.fiche-name{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:800}
+.fiche-sub{font-size:11px;color:var(--txt2);margin-top:2px}
+.fiche-body{display:none;padding:0 14px 14px;border-top:1px solid var(--bdr)}
+.fiche-body.open{display:block}
+.fiche-body ul{list-style:none;padding:0;margin-top:10px}
+.fiche-body li{font-size:13px;color:var(--txt2);padding:4px 0 4px 16px;position:relative;line-height:1.55}
+.fiche-body li::before{content:'→';position:absolute;left:0;color:var(--em)}
+.fiche-body li strong{color:var(--txt)}
+
+.checklist{margin:10px 0}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border:2px solid var(--bdr);border-radius:5px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.check-box.checked{background:var(--green);border-color:var(--green)}
+.check-box.checked::after{content:'✓';color:#0d0f0a;font-size:12px;font-weight:800}
+.check-label{font-size:13px;color:var(--txt);line-height:1.5;flex:1}
+.check-label.checked{color:var(--txt2);text-decoration:line-through}
+
+.alerte-box{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fca5a5;line-height:1.6}
+.info-box{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#7dd3fc;line-height:1.6}
+.amber-box{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px;margin:10px 0;font-size:12.5px;color:#fcd34d;line-height:1.6}
+
+/* Tableau contrôle véhicule */
+.ctrl-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.ctrl-table th{background:rgba(14,165,233,.15);color:var(--em);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;padding:8px 10px;text-align:left;border-bottom:1px solid rgba(14,165,233,.2)}
+.ctrl-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--txt2);vertical-align:top}
+.ctrl-table tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.ctrl-table td:first-child{color:var(--txt);font-weight:600;width:40%}
+
+/* Quiz */
+.quiz-q{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:16px;margin-bottom:12px}
+.quiz-enonce{font-size:14px;color:var(--txt);margin-bottom:12px;line-height:1.6;font-weight:600}
+.quiz-options{display:flex;flex-direction:column;gap:6px}
+.quiz-opt{padding:10px 14px;border-radius:8px;border:1.5px solid var(--bdr);background:rgba(255,255,255,.02);font-size:13px;color:var(--txt2);cursor:pointer;text-align:left;transition:all .2s;font-family:'Karla',sans-serif}
+.quiz-opt:hover{border-color:var(--em);color:var(--txt)}
+.quiz-opt.correct{background:rgba(34,197,94,.12);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.quiz-feedback{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;display:none;line-height:1.5}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(34,197,94,.1);color:var(--green)}
+.quiz-feedback.ko{background:rgba(239,68,68,.1);color:var(--red)}
+.score-display{text-align:center;padding:20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr)}
+.score-num{font-family:'Barlow Condensed',sans-serif;font-size:48px;font-weight:900;color:var(--em)}
+
+.audio-btn{position:fixed;bottom:24px;right:20px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--em2),var(--em));border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:100;box-shadow:0 4px 20px rgba(14,165,233,.4)}
+</style>
+</head>
+<body>
+
+<div class="module-header">
+  <div class="header-top">
+    <div class="module-title">🚑 PraxisVéhicule</div>
+    <div class="module-badge">BC3+BC4 · TRANSPORT & MATÉRIEL</div>
+  </div>
+  <div class="prenom-display">Ambulancier : <span id="prenom-display">—</span></div>
+  <div class="tabs">
+    <div class="tab active" onclick="setTab(0)">🔧 Contrôle véhicule</div>
+    <div class="tab" onclick="setTab(1)">🚗 Conduite sanitaire</div>
+    <div class="tab" onclick="setTab(2)">🧹 Hygiène & bio</div>
+    <div class="tab" onclick="setTab(3)">📦 Matériel embarqué</div>
+    <div class="tab" onclick="setTab(4)">❓ Quiz</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══ TAB 0 : CONTRÔLE VÉHICULE ══ -->
+<div id="tab-0">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le contrôle du véhicule sanitaire est une obligation réglementaire avant chaque prise de service. Il engage la responsabilité de l'ambulancier en cas de défaut non signalé.</p>
+
+  <div class="section-title">Contrôle quotidien obligatoire</div>
+  <table class="ctrl-table">
+    <tr><th>Élément</th><th>Vérification</th></tr>
+    <tr><td>Niveaux</td><td>Huile moteur · Liquide refroidissement · Lave-glace · Liquide de frein</td></tr>
+    <tr><td>Pneumatiques</td><td>Pression (y compris roue de secours) · Usure · Absence de dommage visible</td></tr>
+    <tr><td>Éclairage</td><td>Feux avant/arrière · Feux de détresse · Gyrophares · Avertisseur sonore</td></tr>
+    <tr><td>Freinage</td><td>Test pédale (dureté, tenue) · Frein de stationnement</td></tr>
+    <tr><td>Carburant</td><td>Niveau suffisant pour l'ensemble de la garde</td></tr>
+    <tr><td>Documents</td><td>Carte grise · Assurance · Contrôle technique · Autorisation de mise en circulation sanitaire</td></tr>
+    <tr><td>Communication</td><td>Radio opérationnelle · Téléphone chargé · GPS fonctionnel</td></tr>
+    <tr><td>Cellule sanitaire</td><td>Brancard sécurisé · Sangles intactes · Bouteille O2 (niveau + robinet) · DEA chargé</td></tr>
+  </table>
+
+  <div class="alerte-box"><strong>Défaut constaté = signalement obligatoire</strong> à la société avant la prise de service. Ne jamais partir avec un véhicule défaillant. La responsabilité civile et pénale de l'ambulancier est engagée en cas d'accident sur défaut non déclaré.</div>
+
+  <div class="section-title">Checklist prise de service</div>
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Niveaux vérifiés</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Pneumatiques OK</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Éclairage + gyrophares fonctionnels</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Documents de bord présents et valides</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Bouteille O2 : niveau ≥ 50% + robinet fermé</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">DEA chargé + électrodes dans date</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Brancard sécurisé + sangles intactes</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Matériel d'urgence complet (voir onglet Matériel)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Hygiène cellule sanitaire conforme (voir onglet Hygiène)</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 1 : CONDUITE SANITAIRE ══ -->
+<div id="tab-1" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">La conduite d'un véhicule sanitaire terrestre (VST) obéit à des règles spécifiques qui vont au-delà du Code de la route. Le patient à bord est une contrainte permanente.</p>
+
+  <div class="section-title">Régimes de circulation</div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🔵</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--em)">Transport programmé — régime normal</div>
+        <div class="fiche-sub">Consultation, hospitalisation non urgente</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Respect strict du Code de la route — vitesses limitées, priorités standards</li>
+        <li>Confort du patient prioritaire — accélérations et freinages progressifs</li>
+        <li>Gyrophares et sirène INTERDITS — véhicule prioritaire uniquement sur mission urgente</li>
+        <li>Itinéraire adapté à l'état du patient — éviter les routes dégradées si patient douloureux</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🔴</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--red)">Transport urgent — véhicule prioritaire</div>
+        <div class="fiche-sub">Mission SAMU — urgence vitale</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Gyrophares ET sirène OBLIGATOIREMENT simultanés pour bénéficier de la priorité (Art. R432-1 CR)</li>
+        <li>Passage au feu rouge autorisé — APRÈS s'être assuré que la voie est libre</li>
+        <li>Sens interdit autorisé si nécessité absolue — vitesse adaptée au risque</li>
+        <li class="alerte-item" style="color:var(--red)">⚠️ La priorité ne dispense PAS d'assurer la sécurité — l'ambulancier reste responsable en cas d'accident</li>
+        <li>Signalement systématique au SAMU si retard ou incident de parcours</li>
+      </ul>
+      <div class="alerte-box"><strong>Dérogation au Code de la route ≠ impunité.</strong> En cas d'accident avec un véhicule prioritaire, la responsabilité de l'ambulancier est évaluée sur la base de la nécessité absolue et de la vitesse adaptée.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Conduite avec patient à bord</div>
+  <div class="info-box">
+    Le patient est une charge mobile. Chaque accélération, freinage ou virage est ressenti différemment selon son état : douleur, nausées, aggravation du choc. <strong>Anticiper les manœuvres</strong> est une compétence clé de l'ambulancier.
+  </div>
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🎯</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--amber)">Principes de conduite douce</div>
+        <div class="fiche-sub">Confort et sécurité du patient</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Accélérations progressives — pas de démarrages brusques</li>
+        <li>Anticipation au freinage — distance de sécurité augmentée</li>
+        <li>Virages à vitesse réduite — patient mal immobilisé = risque de chute</li>
+        <li>Dos d'âne et ralentisseurs — annonce à l'équipier, vitesse très réduite</li>
+        <li>Communication constante avec l'équipier : "Je freine", "Virage à droite"</li>
+        <li>Surveillance miroir intérieur cellule — observer l'état du patient si seul</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-title">Réglementation spécifique VST</div>
+  <div class="amber-box">
+    <strong>Permis B + FGSU niveau 2</strong> obligatoires pour conduire un VST. L'ambulancier DEA doit également être titulaire de l'<strong>attestation préfectorale</strong> d'aptitude à la conduite d'ambulance. Visite médicale annuelle obligatoire (médecin agréé préfecture).
+  </div>
+</div>
+
+<!-- ══ TAB 2 : HYGIÈNE & BIO ══ -->
+<div id="tab-2" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">L'hygiène du véhicule sanitaire est une obligation réglementaire (arrêté du 21 décembre 1987). Elle protège les patients successifs et l'ambulancier lui-même.</p>
+
+  <div class="section-title">Niveaux de décontamination</div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🧹</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--em)">Bionettoyage entre chaque patient</div>
+        <div class="fiche-sub">Surfaces contact — lingettes désinfectantes</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Brancard : surfaces en contact avec le patient — lingette désinfectante EN NORME</li>
+        <li>Sangles : essuyage si souillées, remplacement si non nettoyables</li>
+        <li>Poignées, barres d'appui, crochet sérum</li>
+        <li>Durée minimale de contact du désinfectant : respecter le temps indiqué sur le produit</li>
+        <li>Gants obligatoires pendant le bionettoyage</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🧽</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--orange)">Désinfection approfondie quotidienne</div>
+        <div class="fiche-sub">Fin de service — cellule complète</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Sol de la cellule : balayage humide + désinfectant</li>
+        <li>Parois : essuyage complet avec produit désinfectant</li>
+        <li>Matelas et coussin : housse retirée et lavée si souillée, surface désinfectée</li>
+        <li>Tablette, rangements, tiroirs : nettoyage + désinfection</li>
+        <li>Aspirateur de mucosités : vidange et désinfection si utilisé</li>
+        <li>Traçabilité : registre de nettoyage daté et signé</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">⚠️</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--red)">Gestion des déchets (DASRI)</div>
+        <div class="fiche-sub">Déchets d'Activité de Soins à Risque Infectieux</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Conteneur DASRI jaune à bord — OBLIGATOIRE pour aiguilles, matériel souillé</li>
+        <li>Ne jamais recapuchonner une aiguille — risque AES majeur</li>
+        <li>Sacs poubelle rouges pour déchets biologiques (compresses souillées, gants)</li>
+        <li>Filière d'élimination réglementée — jamais dans les ordures ménagères</li>
+        <li>Traçabilité de l'élimination : bon de prise en charge DASRI</li>
+      </ul>
+      <div class="alerte-box">Les DASRI sont une source majeure d'AES. Un conteneur plein à ⅔ doit être scellé et remplacé immédiatement — ne jamais tasser ou forcer.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Checklist hygiène fin de service</div>
+  <div class="checklist">
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Bionettoyage cellule complète effectué</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Brancard désinfecté (surfaces + sangles)</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">DASRI correctement scellé et évacué</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Registre de nettoyage renseigné et signé</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">Linge souillé mis en filière appropriée</div></div>
+    <div class="check-item"><div class="check-box" onclick="toggleCheck(this)"></div><div class="check-label">EPI jetables éliminés (gants, masques)</div></div>
+  </div>
+</div>
+
+<!-- ══ TAB 3 : MATÉRIEL ══ -->
+<div id="tab-3" style="display:none">
+  <p style="font-size:13px;color:var(--txt2);margin-bottom:16px;line-height:1.6">Le matériel embarqué dans une ambulance de type A2 (Transport Sanitaire Urgent) est défini par l'arrêté du 10 février 2009 modifié. L'ambulancier est responsable de sa présence et de son état.</p>
+
+  <div class="section-title">Matériel obligatoire — Ambulance A2</div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🫁</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--em)">Oxygénothérapie</div>
+        <div class="fiche-sub">Source O2 + dispositifs d'administration</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Bouteille O2 — volume minimal réglementaire selon type d'ambulance</li>
+        <li>Débit-litre — vérification du bon fonctionnement</li>
+        <li>Masque haute concentration adulte + enfant</li>
+        <li>Masque simple adulte + enfant</li>
+        <li>Lunettes nasales adulte</li>
+        <li>Ballon autoremplisseur à valve unidirectionnelle (BAVU) adulte + enfant + nourrisson</li>
+        <li>Aspirateur de mucosités (électrique ou à pied)</li>
+      </ul>
+      <div class="amber-box">Robinet O2 : <strong>toujours fermé entre les transports</strong> — risque d'explosion en cas de fuite en présence d'une flamme.</div>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">❤️</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--red)">Matériel de réanimation</div>
+        <div class="fiche-sub">ACR + urgences vitales</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>DEA + électrodes adulte ET pédiatriques — vérification LED verte de charge</li>
+        <li>Garrot tourniquet (CAT ou équivalent) × 2 minimum</li>
+        <li>Pansements compressifs (Israeli bandage) × 2</li>
+        <li>Colliers cervicaux taille adulte (petit/moyen/grand) + pédiatrique</li>
+        <li>Plan dur + sangles × 3 minimum</li>
+        <li>Brancard cuillère (Scoop stretcher)</li>
+        <li>Couverture de survie × 2</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🩺</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--amber)">Monitoring & évaluation</div>
+        <div class="fiche-sub">Constantes vitales</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Tensiomètre (manuel ou électronique) + brassards tailles adulte/enfant</li>
+        <li>Saturomètre (oxymètre de pouls)</li>
+        <li>Thermomètre</li>
+        <li>Glucomètre + bandelettes + lancettes</li>
+        <li>Stéthoscope</li>
+        <li>Lampe stylo</li>
+        <li>Montre ou chronomètre</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="fiche">
+    <div class="fiche-header" onclick="toggleFiche(this)">
+      <div class="fiche-icon">🛡️</div>
+      <div class="fiche-info">
+        <div class="fiche-name" style="color:var(--green)">EPI — Équipements de Protection Individuelle</div>
+        <div class="fiche-sub">Protection ambulancier + patient</div>
+      </div>
+    </div>
+    <div class="fiche-body">
+      <ul>
+        <li>Gants latex/nitrile non stériles — boîte complète × 2 tailles minimum</li>
+        <li>Masques chirurgicaux × 20 minimum</li>
+        <li>Masques FFP2 × 5 minimum</li>
+        <li>Lunettes de protection</li>
+        <li>Sur-blouses imperméables × 2</li>
+        <li>Solution hydroalcoolique</li>
+        <li>Gilets haute visibilité × 2 (conducteur + équipier)</li>
+        <li>Gants de manutention × 2 paires</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB 4 : QUIZ ══ -->
+<div id="tab-4" style="display:none">
+  <div id="quiz-zone"></div>
+  <div id="score-zone" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">—</div>
+      <div style="color:var(--txt2);font-size:13px;margin-top:4px">réponses correctes</div>
+      <div id="score-msg" style="font-size:14px;margin-top:12px;color:var(--txt)"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="audio-btn" id="audio-btn" onclick="toggleAudio()">🔊</button>
+
+<script>
+var prenom = localStorage.getItem('praxisambu_prenom') || 'Ambulancier';
+document.getElementById('prenom-display').textContent = prenom;
+
+var tabActif = 0;
+function setTab(n){
+  document.querySelectorAll('.tab').forEach(function(t,i){ t.classList.toggle('active',i===n); });
+  for(var i=0;i<5;i++) document.getElementById('tab-'+i).style.display = i===n?'block':'none';
+  tabActif = n; window.scrollTo(0,0);
+  if(n===4 && !quizInit) initQuiz();
+  stopAudio();
+}
+function toggleFiche(h){ h.nextElementSibling.classList.toggle('open'); }
+function toggleCheck(b){ b.classList.toggle('checked'); b.nextElementSibling.classList.toggle('checked'); }
+
+var quizInit=false, scoreOk=0, repondu=[];
+var QUESTIONS=[
+  {q:"Quand peut-on utiliser les gyrophares et la sirène sur un VST ?",opts:["À tout moment pour gagner du temps","Uniquement en mission urgente sur ordre du SAMU, gyrophares ET sirène simultanément","Gyrophares seuls suffisent pour bénéficier de la priorité","Librement, à la discrétion de l'ambulancier"],ok:1,exp:"Les gyrophares ET la sirène doivent être activés SIMULTANÉMENT pour bénéficier du régime prioritaire (Art. R432-1 CR). Les gyrophares seuls ne confèrent pas la priorité. L'utilisation est réservée aux missions urgentes sur ordre du médecin régulateur."},
+  {q:"Un défaut est constaté sur le véhicule en début de service. Que faites-vous ?",opts:["Partir quand même si le défaut semble mineur","Signaler à la société AVANT la prise de service et ne pas partir avec un véhicule défaillant","Réparer soi-même si possible","Noter le défaut en fin de service"],ok:1,exp:"Tout défaut constaté doit être signalé AVANT la prise de service. L'ambulancier ne part jamais avec un véhicule défaillant. Sa responsabilité civile et pénale est engagée en cas d'accident sur un défaut non déclaré."},
+  {q:"À quel niveau le conteneur DASRI doit-il être scellé et remplacé ?",opts:["Quand il est complètement plein","Aux deux tiers (⅔) de remplissage","À moitié","En fin de garde uniquement"],ok:1,exp:"Le conteneur DASRI doit être scellé aux deux tiers de remplissage. Ne jamais tasser ni forcer. Un conteneur trop plein multiplie le risque d'AES lors de la manipulation et du scellement."},
+  {q:"Le robinet de la bouteille d'O2 doit être dans quel état entre les transports ?",opts:["Ouvert pour être prêt à l'emploi","Fermé — risque d'explosion en cas de fuite et présence de flamme","À demi-ouvert","Peu importe si le débitlitre est à zéro"],ok:1,exp:"Le robinet O2 doit toujours être fermé entre les transports. Une fuite d'O2 en présence d'une source d'ignition (mégot, étincelle) peut provoquer un incendie ou une explosion dans la cellule."},
+  {q:"Pour bénéficier de l'autorisation de conduire un VST, quels documents sont obligatoires ?",opts:["Permis B uniquement","Permis B + FGSU niveau 2 + attestation préfectorale + visite médicale annuelle","Permis B + diplôme DEA uniquement","Aucun document spécifique — le permis B suffit"],ok:1,exp:"La conduite d'un VST nécessite : permis B + FGSU niveau 2 + attestation préfectorale d'aptitude à la conduite d'ambulance + visite médicale annuelle auprès d'un médecin agréé par la préfecture."},
+  {q:"Quelle est la fréquence minimale du bionettoyage de la cellule sanitaire ?",opts:["Une fois par jour en fin de service","Entre chaque patient pour les surfaces de contact, et désinfection approfondie en fin de service","Une fois par semaine","Uniquement en cas de souillure visible"],ok:1,exp:"Le bionettoyage des surfaces de contact (brancard, sangles, barres) est obligatoire entre chaque patient. Une désinfection approfondie de l'ensemble de la cellule est réalisée en fin de service, avec traçabilité dans le registre."},
+  {q:"Lors d'un transport urgent avec patient à bord, comment doit être la conduite ?",opts:["Le plus vite possible pour raccourcir le temps d'exposition","Rapide mais avec accélérations et freinages progressifs, en communicant avec l'équipier","Normale — le patient est sanglé donc le confort importe peu","Identique au transport programmé — pas de différence"],ok:1,exp:"Même en urgence, la conduite doit anticiper et être progressive. Le patient est une charge mobile : chaque manœuvre brusque aggrave sa douleur et peut déstabiliser les immobilisations. La communication constante avec l'équipier est indispensable."},
+];
+
+function initQuiz(){
+  quizInit=true; scoreOk=0; repondu=new Array(QUESTIONS.length).fill(false);
+  document.getElementById('quiz-zone').innerHTML=QUESTIONS.map(function(q,qi){
+    return '<div class="quiz-q" id="qq-'+qi+'"><div class="quiz-enonce">'+(qi+1)+'. '+q.q+'</div><div class="quiz-options">'+
+      q.opts.map(function(o,oi){ return '<button class="quiz-opt" onclick="repondre('+qi+','+oi+')">'+o+'</button>'; }).join('')+
+      '</div><div class="quiz-feedback" id="fb-'+qi+'"></div></div>';
+  }).join('');
+}
+
+function repondre(qi,oi){
+  if(repondu[qi]) return; repondu[qi]=true;
+  var q=QUESTIONS[qi];
+  document.querySelectorAll('#qq-'+qi+' .quiz-opt').forEach(function(o){ o.disabled=true; });
+  var fb=document.getElementById('fb-'+qi);
+  if(oi===q.ok){ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('correct'); fb.className='quiz-feedback show ok'; fb.textContent='✅ '+q.exp; scoreOk++; }
+  else{ document.querySelectorAll('#qq-'+qi+' .quiz-opt')[oi].classList.add('wrong'); document.querySelectorAll('#qq-'+qi+' .quiz-opt')[q.ok].classList.add('correct'); fb.className='quiz-feedback show ko'; fb.textContent='❌ '+q.exp; }
+  if(repondu.every(Boolean)){
+    setTimeout(function(){
+      document.getElementById('score-zone').style.display='block';
+      document.getElementById('score-num').textContent=scoreOk+'/'+QUESTIONS.length;
+      var p=scoreOk/QUESTIONS.length;
+      document.getElementById('score-msg').textContent=p===1?'🏆 Parfait '+prenom+' — tu maîtrises le véhicule sanitaire !':p>=.7?'👍 Bon résultat.':'📖 Revois les obligations réglementaires BC3 et BC4.';
+    },400);
+  }
+}
+
+var AUDIO=[
+  "Contrôle du véhicule. Obligation réglementaire avant chaque prise de service. Niveaux, pneumatiques, éclairage, freinage, documents, bouteille O2 robinet fermé, DEA chargé, brancard sécurisé. Tout défaut doit être signalé avant le départ — jamais avec un véhicule défaillant.",
+  "Conduite sanitaire. Transport programmé : Code de la route strict, gyrophares interdits. Transport urgent : gyrophares ET sirène simultanément obligatoires pour la priorité. Passage au feu rouge autorisé APRÈS vérification. La priorité ne dispense pas de la sécurité. Conduite douce avec patient à bord — anticiper, communiquer avec l'équipier.",
+  "Hygiène et risque biologique. Bionettoyage entre chaque patient sur toutes les surfaces de contact. Désinfection approfondie en fin de service avec traçabilité. DASRI : conteneur jaune à bord obligatoire, sceller aux deux tiers, filière réglementée. Gants obligatoires pendant tout bionettoyage.",
+  "Matériel embarqué ambulance A2. Oxygénothérapie : bouteille O2, masques, BAVU. Réanimation : DEA avec électrodes adulte et pédiatriques, garrot CAT, colliers cervicaux, plan dur. Monitoring : tensiomètre, saturomètre, glucomètre, stéthoscope. EPI : gants, masques chirurgicaux et FFP2, gilets haute visibilité.",
+  "Quiz véhicule sanitaire BC3 et BC4. 7 questions. Bonne chance "+prenom+"."
+];
+
+var synth=window.speechSynthesis, audioOn=false;
+function toggleAudio(){
+  if(audioOn){ stopAudio(); return; }
+  audioOn=true; document.getElementById('audio-btn').textContent='⏹';
+  var u=new SpeechSynthesisUtterance(AUDIO[tabActif]);
+  u.lang='fr-FR'; u.rate=0.92;
+  var v=synth.getVoices().filter(function(x){ return x.lang.startsWith('fr'); });
+  if(v.length) u.voice=v[0];
+  u.onend=function(){ audioOn=false; document.getElementById('audio-btn').textContent='🔊'; };
+  synth.speak(u);
+}
+function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
+document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
+</body>
+</html>
