@@ -308,6 +308,7 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-he
 <!-- ══ TAB 4 : IMMOBILISATION ══ -->
 <div id="tab-4" style="display:none">
   <div class="section-title">Immobilisation rachis cervical</div>
+  <div class="info-box">4 familles de colliers cervicaux (C1 à C4), à ne pas confondre : <strong>C1</strong> souple (confort léger, jamais en urgence) · <strong>C2</strong> semi-rigide (soutien moyen) · <strong>C3</strong> semi-rigide réglable en hauteur · <strong>C4</strong> rigide avec appuis occipital/mentonnier/sternal — c'est le <strong>seul type utilisé en urgence pré-hospitalière</strong> (type Stifneck, Ambu Perfit ACE). Les modèles C4 d'intervention sont le plus souvent réglables multi-tailles : un seul dispositif couvre plusieurs morphologies, pratique en intervention.</div>
   <div class="geste-card">
     <div class="geste-header" onclick="toggleGeste(this)">
       <div class="geste-icon">🦴</div>
@@ -325,8 +326,10 @@ body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-he
         <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">4</div><div class="etape-txt">Fixer la partie antérieure — vérifier position du menton et de la trachée</div></div>
         <div class="etape"><div class="etape-num" style="background:rgba(249,115,22,.2);color:var(--orange)">5</div><div class="etape-txt">Maintien manuel conservé jusqu'au planchage complet</div></div>
       </div>
+      <div class="alerte-box">Un collier mal ajusté (trop lâche ou trop serré) laisse des mouvements de tête possibles et devient inefficace. Le collier seul ne suffit jamais — toujours associé au maintien manuel ou à une immobilisation complète (plan dur, matelas à dépression). Minimum 2 secouristes pour poser un collier sans risque.</div>
     </div>
   </div>
+
 
   <div class="section-title">Attelle fémur — Fracture membre inférieur</div>
   <div class="geste-card">
@@ -453,7 +456,7 @@ function toggleAudio(){
 function stopAudio(){ synth.cancel(); audioOn=false; document.getElementById('audio-btn').textContent='🔊'; }
 
 document.addEventListener('click',function(){ window.parent.postMessage({type:'activite'},'*'); });
+</script>
 <script src="praxisambu-feedback.js"></script>
-  <script src="praxisambu-feedback.js"></script>
 </body>
 </html>
