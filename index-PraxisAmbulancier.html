@@ -2,270 +2,214 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>PraxisAmbulancier · Formation DEA & AA</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚑</text></svg>">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PraxisAmbu">
-<meta name="theme-color" content="#0d0f0a">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@300;400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisAmbulancier · Régulation & interventions</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f0a;--bg2:#131610;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);
-  --txt:#eef2ec;--txt2:#7a8a72;--mono:'DM Mono',monospace;
-  --bc1:#f97316;--bc2:#ef4444;--bc3:#f59e0b;--bc4:#22c55e;--bc5:#3b82f6;
-  --em:#f97316;
+  --bg:      #0a0e16;
+  --bg2:     #0f1522;
+  --panel:   #121a26;
+  --panel2:  rgba(255,255,255,.035);
+  --bdr:     rgba(255,255,255,.09);
+  --txt:     #e6ebf3;
+  --txt2:    #7c869a;
+  --amber:   #ffb020;
+  --red:     #ef4444;
+  --mon:     #34d399;
+  --blue:    #4a90e2;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg)}
-#home{position:fixed;inset:0;background:linear-gradient(160deg,var(--bg) 0%,#0f1208 60%,var(--bg) 100%);color:var(--txt);overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:'Karla',sans-serif;display:flex;flex-direction:column;}
-#module-frame{position:fixed;inset:0;width:100%;height:100%;border:none;display:none;background:var(--bg);z-index:100;}
-#btn-retour{position:fixed;top:env(safe-area-inset-top,12px);left:16px;z-index:200;display:none;background:rgba(13,15,10,.92);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:8px 16px;color:var(--txt);font-size:14px;font-weight:600;cursor:pointer;backdrop-filter:blur(10px);font-family:'Karla',sans-serif;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(74,144,226,.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 90% 100%, rgba(255,176,32,.05) 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg) 0%, var(--bg2) 60%, var(--bg) 100%);
+  color:var(--txt); min-height:100vh; padding-bottom:60px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.disp{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.mono{font-family:'JetBrains Mono',monospace}
 
-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(13,15,10,.92);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);}
-.nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--txt);letter-spacing:-0.5px}
-.nav-logo span{color:var(--em)}
-.nav-tag{font-size:10px;letter-spacing:2px;color:var(--txt2);border:1px solid rgba(255,255,255,.07);padding:3px 10px;border-radius:20px;font-family:var(--mono)}
+/* ── HEADER / ÉTOILE ── */
+header{padding:44px 0 24px;text-align:center}
+.star-mark{width:64px;height:64px;margin:0 auto 18px;display:block}
+h1{font-size:clamp(28px,6vw,42px);letter-spacing:.5px;line-height:1}
+h1 .sub-am{color:var(--amber)}
+.tagline{color:var(--txt2);font-size:14px;margin-top:10px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6}
+.chain{
+  display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:22px;
+}
+.chain span{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;
+  color:var(--txt2);background:rgba(255,255,255,.03);border:1px solid var(--bdr);
+  padding:5px 10px;border-radius:20px;
+}
+.chain span:not(:last-child)::after{content:'→';margin-left:8px;color:var(--bdr)}
 
-/* Hero ambulance */
-.hero{text-align:center;padding:36px 20px 28px;position:relative}
-.hero-ambu{display:block;margin:0 auto 20px;width:180px}
-.hero-badge{display:inline-block;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--em);padding:4px 14px;border-radius:20px;font-size:11px;letter-spacing:2px;font-family:var(--mono);margin-bottom:14px}
-.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:900;line-height:1.05;letter-spacing:-1px;margin-bottom:10px}
-.hero h1 em{font-style:italic;color:var(--em)}
-.hero p{font-size:14px;color:var(--txt2);line-height:1.7;max-width:380px;margin:0 auto}
+/* ── SÉLECTEUR NIVEAU ── */
+.niveau-select{display:flex;gap:8px;justify-content:center;margin:28px 0 8px}
+.niveau-btn{
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.5px;
+  padding:9px 22px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:var(--panel2);color:var(--txt2);cursor:pointer;transition:all .15s;
+}
+.niveau-btn.active{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.45);color:var(--amber)}
+.niveau-btn:hover{border-color:rgba(255,255,255,.2);color:var(--txt)}
 
-/* Niveau selector */
-.niveau-wrap{display:flex;gap:8px;justify-content:center;margin:0 20px 24px;padding:0 20px}
-.niveau-btn{flex:1;max-width:160px;padding:10px;border-radius:10px;border:1.5px solid var(--bdr);background:var(--card);color:var(--txt2);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:all .2s}
-.niveau-btn.active{border-color:var(--em);background:rgba(249,115,22,.12);color:var(--em)}
+/* ── FICHES D'INTERVENTION (modules BC) ── */
+.section-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;
+  color:var(--txt2);margin:34px 0 12px;padding-left:2px;
+}
+.tickets{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:460px){.tickets{grid-template-columns:1fr}}
 
-/* Grille modules */
-.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 40px;max-width:640px;margin:0 auto;width:100%}
-.module-card{position:relative;border-radius:14px;padding:16px 14px;border:1.5px solid rgba(255,255,255,.07);background:var(--card);display:flex;flex-direction:column;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s,opacity .15s;user-select:none}
-.module-card:active{transform:scale(.97);opacity:.85}
-.module-card.locked{opacity:.35;cursor:not-allowed;filter:grayscale(60%)}
-.module-card.locked::after{content:'🔒';position:absolute;top:10px;right:10px;font-size:14px}
-.module-num{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.2);margin-bottom:8px}
-.module-icon{font-size:26px;margin-bottom:6px}
-.module-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:2px;line-height:1}
-.module-sub{font-size:10px;color:var(--txt2);margin-bottom:6px}
-.module-desc{font-size:11.5px;color:var(--txt2);line-height:1.55;flex:1;margin-bottom:10px}
-.module-btn{display:block;text-align:center;padding:8px;border-radius:8px;font-size:11px;font-weight:700;border:1.5px solid transparent;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
-.module-card.full-width{grid-column:span 2}
+.ticket{
+  position:relative;
+  background:var(--panel);border:1px solid var(--bdr);border-radius:10px;
+  padding:16px 16px 14px;text-decoration:none;color:var(--txt);
+  display:block;overflow:hidden;transition:border-color .15s,transform .1s;
+}
+.ticket::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--code-color,var(--blue));
+}
+.ticket:hover{border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.ticket:active{transform:translateY(0)}
+.ticket-code{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  color:var(--code-color,var(--blue));letter-spacing:.5px;display:block;margin-bottom:6px;
+}
+.ticket-title{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:19px;line-height:1.15;margin-bottom:5px}
+.ticket-desc{font-size:12.5px;color:var(--txt2);line-height:1.5}
 
-footer{border-top:1px solid rgba(255,255,255,.06);padding:20px;text-align:center;font-size:10px;color:var(--txt2);font-family:var(--mono)}
+/* ── MODULES TERRAIN ── */
+.field-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.field-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel2);border:1px solid var(--bdr);border-radius:12px;
+  padding:14px 16px;text-decoration:none;color:var(--txt);transition:border-color .15s;
+}
+.field-card:hover{border-color:rgba(255,255,255,.2)}
+.field-icon{
+  width:38px;height:38px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:rgba(255,255,255,.05);
+}
+.field-body{flex:1}
+.field-title{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px}
+.field-desc{font-size:12px;color:var(--txt2);margin-top:2px}
+.field-arrow{color:var(--txt2);font-size:14px}
+
+footer{text-align:center;padding:36px 20px 10px;color:var(--txt2);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
 </style>
-
-<script>
-(function(){
-  var code = sessionStorage.getItem('praxisambu_code');
-  var niveau = sessionStorage.getItem('praxisambu_niveau');
-  if(!code || !niveau) window.location.replace('acces-ambu.html');
-})();
-document.addEventListener('visibilitychange',function(){
-  if(document.visibilityState==='hidden'){
-    sessionStorage.removeItem('praxisambu_code');
-    sessionStorage.removeItem('praxisambu_niveau');
-  }
-});
-</script>
 </head>
 <body>
-<button id="btn-retour" onclick="retourAccueil()">← PraxisAmbulancier</button>
-<iframe id="module-frame" src="" allowfullscreen></iframe>
+<div class="wrap">
 
-<div id="home">
-  <nav>
-    <div class="nav-logo">Praxis<span>Ambulancier</span></div>
-    <div class="nav-tag" id="nav-niveau">DEA 2022</div>
-  </nav>
-
-  <!-- Hero SVG Ambulance -->
-  <div class="hero">
-    <svg class="hero-ambu" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-      <!-- Corps ambulance -->
-      <rect x="10" y="35" width="160" height="50" rx="6" fill="#1a1f14" stroke="#f97316" stroke-width="1.5"/>
-      <!-- Cabine -->
-      <rect x="130" y="20" width="40" height="35" rx="5" fill="#1a1f14" stroke="#f97316" stroke-width="1.5"/>
-      <!-- Vitre cabine -->
-      <rect x="136" y="26" width="28" height="18" rx="3" fill="rgba(59,130,246,.3)" stroke="#3b82f6" stroke-width="1"/>
-      <!-- Croix rouge -->
-      <rect x="75" y="45" width="20" height="6" rx="1" fill="#ef4444"/>
-      <rect x="82" y="38" width="6" height="20" rx="1" fill="#ef4444"/>
-      <!-- Gyrophare -->
-      <rect x="138" y="14" width="24" height="8" rx="3" fill="#1a1f14" stroke="#f97316" stroke-width="1"/>
-      <rect id="gyro-g" x="141" y="16" width="8" height="4" rx="1.5" fill="#ef4444" opacity="1"/>
-      <rect id="gyro-d" x="153" y="16" width="8" height="4" rx="1.5" fill="#3b82f6" opacity="0.2"/>
-      <!-- Roues -->
-      <circle cx="45" cy="85" r="12" fill="#0d0f0a" stroke="#7a8a72" stroke-width="2"/>
-      <circle cx="45" cy="85" r="5" fill="#7a8a72"/>
-      <circle cx="145" cy="85" r="12" fill="#0d0f0a" stroke="#7a8a72" stroke-width="2"/>
-      <circle cx="145" cy="85" r="5" fill="#7a8a72"/>
-      <!-- Bandes latérales -->
-      <rect x="10" y="55" width="120" height="4" fill="rgba(249,115,22,.3)"/>
+  <header>
+    <svg class="star-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Étoile de la vie : 6 branches en losange, générées par rotation à 60° -->
+      <path d="M 40.00,50.00 L 60.00,50.00 L 60.00,10.00 L 40.00,10.00 Z
+               M 45.00,41.34 L 55.00,58.66 L 89.64,38.66 L 79.64,21.34 Z
+               M 55.00,41.34 L 45.00,58.66 L 79.64,78.66 L 89.64,61.34 Z
+               M 60.00,50.00 L 40.00,50.00 L 40.00,90.00 L 60.00,90.00 Z
+               M 55.00,58.66 L 45.00,41.34 L 10.36,61.34 L 20.36,78.66 Z
+               M 45.00,58.66 L 55.00,41.34 L 20.36,21.34 L 10.36,38.66 Z"
+            fill="#1e3a9e"/>
     </svg>
+    <h1 class="disp">Praxis<span class="sub-am">Ambulancier</span></h1>
+    <p class="tagline">Formation DEA — référentiel arrêté du 11 avril 2022. Bilans, gestes, régulation et réalités du métier.</p>
+    <div class="chain">
+      <span>Détection</span><span>Alerte</span><span>Intervention</span><span>Soins sur place</span><span>Soins en transport</span><span>Transfert</span>
+    </div>
+  </header>
 
-    <div class="hero-badge">Formation pré-hospitalière · Simulation numérique</div>
-    <h1>L'urgence<br>ça s'<em>apprend</em></h1>
-    <p>5 blocs de compétences DEA · Scénarios immersifs · Audio intégré<br>Auxiliaire Ambulancier & DEA</p>
+  <div class="niveau-select">
+    <button class="niveau-btn active" onclick="setNiveau('AA')" id="btn-aa">Niveau AA</button>
+    <button class="niveau-btn" onclick="setNiveau('DEA')" id="btn-dea">Niveau DEA</button>
   </div>
 
-  <!-- Sélecteur niveau -->
-  <div class="niveau-wrap">
-    <button class="niveau-btn" id="btn-aa" onclick="setNiveau('AA')">Auxiliaire Amb.</button>
-    <button class="niveau-btn active" id="btn-dea" onclick="setNiveau('DEA')">DEA complet</button>
+  <div class="section-label">// BLOCS DE COMPÉTENCES</div>
+  <div class="tickets">
+    <a class="ticket" href="PraxisBilan-Ambu.html" style="--code-color:#ef4444">
+      <span class="ticket-code">BC1</span>
+      <div class="ticket-title">Bilan</div>
+      <div class="ticket-desc">Approche ABCDE, bilans primaire et secondaire</div>
+    </a>
+    <a class="ticket" href="PraxisGestes-Ambu.html" style="--code-color:#ffb020">
+      <span class="ticket-code">BC2</span>
+      <div class="ticket-title">Gestes</div>
+      <div class="ticket-desc">Garrot, DAE/RCP, Heimlich, PLS, immobilisation</div>
+    </a>
+    <a class="ticket" href="PraxisInstallation-Ambu.html" style="--code-color:#34d399">
+      <span class="ticket-code">BC3</span>
+      <div class="ticket-title">Installation</div>
+      <div class="ticket-desc">Positions, planchage, brancard, matelas coquille</div>
+    </a>
+    <a class="ticket" href="PraxisRegulation-Ambu.html" style="--code-color:#4a90e2">
+      <span class="ticket-code">BC4</span>
+      <div class="ticket-title">Régulation</div>
+      <div class="ticket-desc">Transmission, SAMU-Centre 15, coordination</div>
+    </a>
+    <a class="ticket" href="PraxisVehicule-Ambu.html" style="--code-color:#ef4444">
+      <span class="ticket-code">BC5</span>
+      <div class="ticket-title">Véhicule</div>
+      <div class="ticket-desc">Conduite adaptée, hygiène, entretien du VSAV</div>
+    </a>
+    <a class="ticket" href="PraxisRealites-Ambu.html" style="--code-color:#ffb020">
+      <span class="ticket-code">BC6</span>
+      <div class="ticket-title">Réalités</div>
+      <div class="ticket-desc">TMS, stress, gardes de nuit, cadre légal</div>
+    </a>
   </div>
 
-  <!-- Modules -->
-  <div class="modules-grid" id="modules-grid">
-
-    <div class="module-card" id="card-bc1" onclick="ouvrirModule('PraxisBilan-Ambu.html')" style="border-color:rgba(249,115,22,.25)">
-      <div class="module-num">BC1 · BLOC 1</div>
-      <div class="module-icon">🚨</div>
-      <div class="module-name" style="color:var(--bc1)">PraxisBilan</div>
-      <div class="module-sub">Bilan primaire & secondaire</div>
-      <div class="module-desc">ABCDE, bilan circonstanciel, lésionnel, vital — AVP moto en situation réelle.</div>
-      <div class="module-btn" style="background:rgba(249,115,22,.1);color:var(--bc1);border-color:rgba(249,115,22,.3)">Démarrer</div>
-    </div>
-
-    <div class="module-card" id="card-bc2" onclick="ouvrirModule('PraxisGestes-Ambu.html')" style="border-color:rgba(239,68,68,.25)">
-      <div class="module-num">BC1 · BLOC 2</div>
-      <div class="module-icon">🩹</div>
-      <div class="module-name" style="color:var(--bc2)">PraxisGestes</div>
-      <div class="module-sub">Gestes d'urgence</div>
-      <div class="module-desc">Garrot CAT, compression, PLS, DEA, Heimlich, immobilisation.</div>
-      <div class="module-btn" style="background:rgba(239,68,68,.1);color:var(--bc2);border-color:rgba(239,68,68,.3)">Démarrer</div>
-    </div>
-
-    <div class="module-card" id="card-bc3" onclick="ouvrirModule('PraxisInstallation-Ambu.html')" style="border-color:rgba(245,158,11,.25)">
-      <div class="module-num">BC2 · BLOC 3</div>
-      <div class="module-icon">🛏️</div>
-      <div class="module-name" style="color:var(--bc3)">PraxisInstallation</div>
-      <div class="module-sub">Positions & brancardage</div>
-      <div class="module-desc">PLS, anti-choc, demi-assise, relevage, immobilisation rachis.</div>
-      <div class="module-btn" style="background:rgba(245,158,11,.1);color:var(--bc3);border-color:rgba(245,158,11,.3)">Démarrer</div>
-    </div>
-
-    <div class="module-card" id="card-bc4" onclick="ouvrirModule('PraxisRegulation-Ambu.html')" style="border-color:rgba(34,197,94,.25)">
-      <div class="module-num">BC3 · BLOC 4</div>
-      <div class="module-icon">📡</div>
-      <div class="module-name" style="color:var(--bc4)">PraxisRégulation</div>
-      <div class="module-sub">SAMU-15 & communication</div>
-      <div class="module-desc">Interface ARM, bilan radio, SBAR ambulancier, régulation médicale.</div>
-      <div class="module-btn" style="background:rgba(34,197,94,.1);color:var(--bc4);border-color:rgba(34,197,94,.3)">Démarrer</div>
-    </div>
-
-    <div class="module-card" id="card-bc6" onclick="ouvrirModule('PraxisVehicule-Ambu.html')" style="border-color:rgba(14,165,233,.25)">
-      <div class="module-num">BC3+BC4 · BLOC 6</div>
-      <div class="module-icon">🚑</div>
-      <div class="module-name" style="color:#0ea5e9">PraxisVéhicule</div>
-      <div class="module-sub">Transport & matériel</div>
-      <div class="module-desc">Contrôle VST, conduite sanitaire, hygiène DASRI, matériel A2.</div>
-      <div class="module-btn" style="background:rgba(14,165,233,.1);color:#0ea5e9;border-color:rgba(14,165,233,.3)">Démarrer</div>
-    </div>
-
-    <div class="module-card full-width" id="card-bc5" onclick="ouvrirModule('PraxisRealites-Ambu.html')" style="border-color:rgba(59,130,246,.25)">
-      <div class="module-num">BC4-BC5 · BLOC 5</div>
-      <div class="module-icon">🧠</div>
-      <div class="module-name" style="color:var(--bc5)">PraxisRéalités</div>
-      <div class="module-sub">Réalités du métier · Santé au travail · Réglementation</div>
-      <div class="module-desc">TMS, stress post-traumatique, nuits & gardes, cadre légal ambulancier, secret professionnel.</div>
-      <div class="module-btn" style="background:rgba(59,130,246,.1);color:var(--bc5);border-color:rgba(59,130,246,.3)">Démarrer</div>
-    </div>
-
+  <div class="section-label">// SUR LE TERRAIN</div>
+  <div class="field-grid">
+    <a class="field-card" href="PraxisBilan-Ambu.html">
+      <div class="field-icon">🩺</div>
+      <div class="field-body">
+        <div class="field-title">Bilan ABCDE</div>
+        <div class="field-desc">Approche systématique du patient</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
+    <a class="field-card" href="PraxisGestes-Ambu.html">
+      <div class="field-icon">🚑</div>
+      <div class="field-body">
+        <div class="field-title">Gestes d'urgence</div>
+        <div class="field-desc">Garrot, DAE, désobstruction, immobilisation</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
+    <a class="field-card" href="PraxisRegulation-Ambu.html">
+      <div class="field-icon">📻</div>
+      <div class="field-body">
+        <div class="field-title">Régulation & transmission</div>
+        <div class="field-desc">Contact SAMU-Centre 15, comptes rendus</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
   </div>
 
-  <footer>
-    PraxisAmbulancier · Référentiel DEA arrêté 11 avr. 2022 · MedExpert<br>
-    <a href="stats-ambu.html" style="color:rgba(255,255,255,.08);font-size:9px;text-decoration:none">accès formateur</a>
-  </footer>
+  <footer>MEDEXPERT · PRAXIS · DEA — ARRÊTÉ DU 11/04/2022</footer>
 </div>
 
 <script>
-// ── Gyrophare animé ─────────────────────────────────────────
-var gyroG = document.getElementById('gyro-g');
-var gyroD = document.getElementById('gyro-d');
-setInterval(function(){
-  gyroG.style.opacity = gyroG.style.opacity === '1' ? '0.15' : '1';
-  gyroD.style.opacity = gyroD.style.opacity === '1' ? '0.15' : '1';
-}, 500);
-
-// ── Niveau ──────────────────────────────────────────────────
-var niveauActuel = sessionStorage.getItem('praxisambu_niveau') || 'DEA';
-
+let niveauActuel = 'AA';
 function setNiveau(n){
   niveauActuel = n;
-  sessionStorage.setItem('praxisambu_niveau', n);
-  document.getElementById('btn-aa').classList.toggle('active', n==='AA');
-  document.getElementById('btn-dea').classList.toggle('active', n==='DEA');
-  document.getElementById('nav-niveau').textContent = n==='AA' ? 'Auxiliaire Amb.' : 'DEA 2022';
-  appliquerNiveau();
+  document.getElementById('btn-aa').classList.toggle('active', n === 'AA');
+  document.getElementById('btn-dea').classList.toggle('active', n === 'DEA');
+  // Le filtrage réel du contenu par niveau reprend la logique déjà en place
+  // dans les pages BC1-BC6 (paramètre transmis ou sessionStorage selon l'existant).
+  sessionStorage.setItem('ambu_niveau', n);
 }
-
-function appliquerNiveau(){
-  // AA = BC1 uniquement (bilan + gestes) ; DEA = tout
-  var modulesAA = ['card-bc1','card-bc2'];
-  var tousCards = ['card-bc1','card-bc2','card-bc3','card-bc4','card-bc5'];
-  tousCards.forEach(function(id){
-    var card = document.getElementById(id);
-    if(!card) return;
-    if(niveauActuel === 'AA' && modulesAA.indexOf(id) === -1){
-      card.classList.add('locked');
-    } else {
-      card.classList.remove('locked');
-    }
-  });
+// Restaurer le niveau choisi précédemment
+if(sessionStorage.getItem('ambu_niveau')){
+  setNiveau(sessionStorage.getItem('ambu_niveau'));
 }
-
-setNiveau(niveauActuel);
-
-// ── Navigation modules ──────────────────────────────────────
-var _moduleStart = null;
-var _moduleNom = null;
-
-function ouvrirModule(fichier){
-  var card = event && event.currentTarget;
-  if(card && card.classList.contains('locked')) return;
-
-  var frame = document.getElementById('module-frame');
-  var btnRetour = document.getElementById('btn-retour');
-  var home = document.getElementById('home');
-
-  _moduleStart = Date.now();
-  _moduleNom = fichier.replace('.html','');
-
-  frame.src = fichier;
-  frame.style.display = 'block';
-  btnRetour.style.display = 'block';
-  home.style.display = 'none';
-  window.scrollTo(0,0);
-}
-
-function retourAccueil(){
-  var frame = document.getElementById('module-frame');
-  frame.style.display = 'none';
-  frame.src = 'about:blank';
-  document.getElementById('btn-retour').style.display = 'none';
-  document.getElementById('home').style.display = 'flex';
-}
-
-// ── Inactivité 5 min ────────────────────────────────────────
-var _timer = null;
-function resetTimer(){
-  clearTimeout(_timer);
-  _timer = setTimeout(function(){
-    sessionStorage.removeItem('praxisambu_code');
-    sessionStorage.removeItem('praxisambu_niveau');
-    window.location.replace('acces-ambu.html');
-  }, 5*60*1000);
-}
-document.addEventListener('click', resetTimer);
-document.addEventListener('touchstart', resetTimer);
-resetTimer();
 </script>
-  <script src="praxisambu-feedback.js"></script>
-  <a href="avis-ambu.html" style="color:rgba(255,255,255,.08);font-size:9px">avis formateur</a>
 </body>
 </html>
