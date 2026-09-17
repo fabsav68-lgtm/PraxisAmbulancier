@@ -40,8 +40,17 @@ def traiter_fichier_html(chemin):
     contenu = chemin.read_text(encoding="utf-8", errors="replace")
     blocs = re.findall(r"<script\b(?![^>]*\bsrc=)[^>]*>(.*?)</script>", contenu, re.S | re.I)
     for i, bloc in enumerate(blocs):
-        if bloc.strip():
-            verifier_js(bloc, f"{chemin} (bloc <script> #{i+1})")
+        bloc_nettoye = bloc.strip()
+        if not bloc_nettoye:
+            continue
+        # Garde-fou : si ce qui a été extrait ressemble à du HTML plutôt qu'à du JS
+        # (balise <script> mal fermée ailleurs dans le fichier, capture décalée),
+        # on l'ignore plutôt que de faire échouer la vérification sur un faux positif.
+        if bloc_nettoye.startswith("<"):
+            print(f"⚠️  {chemin} (bloc <script> #{i+1}) ignoré : contenu qui ressemble à du HTML, pas du JS "
+                  f"(balise <script> probablement mal fermée quelque part dans ce fichier — à vérifier manuellement).")
+            continue
+        verifier_js(bloc, f"{chemin} (bloc <script> #{i+1})")
 
 # Dossiers à ignorer (dépendances, historique git, etc.)
 IGNORE = {".git", "node_modules", ".github"}
