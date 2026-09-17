@@ -1,0 +1,20 @@
+{
+  "name": "PraxisAmbulancier · DEA & AA",
+  "short_name": "PraxisAmbu",
+  "description": "Formation pré-hospitalière — bilans, gestes, régulation",
+  "start_url": "./acces-ambu.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d0f0a",
+  "theme_color": "#0d0f0a",
+  "orientation": "portrait",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "apple-touch-icon-ambu.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
