@@ -104,6 +104,14 @@ h1 .sub-am{color:var(--amber)}
 
 footer{text-align:center;padding:36px 20px 10px;color:var(--txt2);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
 </style>
+  <link rel="manifest" href="manifest.json">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js');
+  });
+}
+</script>
 </head>
 <body>
 <div class="wrap">
