@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PraxisAmbulancier · Obtenir un accès</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0e16; --card:rgba(255,255,255,.035); --bdr:rgba(255,255,255,.1);
+  --txt:#e6ebf3; --txt2:#7c869a; --em:#ffb020; --green:#34d399; --blue:#1e3a9e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;padding:40px 20px 60px}
+.wrap{max-width:480px;margin:0 auto}
+header{text-align:center;margin-bottom:28px}
+.cross{width:44px;height:44px;margin:0 auto 12px}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:32px}
+.logo b{color:var(--em)}
+.sub{font-size:12px;letter-spacing:2px;color:var(--txt2);text-transform:uppercase;margin-top:6px}
+.card{background:var(--card);border:1.5px solid var(--em);border-radius:16px;padding:28px 24px;margin-bottom:16px}
+.card h1{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:22px;margin-bottom:6px}
+.card .desc{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:20px}
+.champ{margin-bottom:18px}
+.champ label{display:block;font-size:12px;color:var(--txt2);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+select{width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--bdr);background:rgba(0,0,0,.3);color:var(--txt);font-size:15px}
+.prix-box{display:flex;align-items:baseline;justify-content:center;gap:6px;padding:18px 0;margin:8px 0 20px;border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.prix{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:700;color:var(--em)}
+.prix-unite{font-size:13px;color:var(--txt2)}
+.inclus{list-style:none;margin-bottom:22px}
+.inclus li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin-bottom:10px;color:var(--txt)}
+.inclus li::before{content:'✓';color:var(--green);font-weight:800;flex-shrink:0}
+button{width:100%;padding:15px;border-radius:10px;border:none;background:var(--em);color:#0a0e16;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .15s;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+button:hover{opacity:.9}
+button:disabled{opacity:.5;cursor:not-allowed}
+.msg-err{color:#f85149;font-size:12.5px;margin-top:12px;text-align:center;min-height:16px}
+.legal{font-size:11px;color:var(--txt2);text-align:center;margin-top:16px;line-height:1.6}
+.legal a{color:var(--txt2)}
+footer{text-align:center;margin-top:30px;font-size:10.5px;letter-spacing:1px;color:var(--txt2);font-family:'JetBrains Mono',monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="cross" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 40.00,50.00 L 60.00,50.00 L 60.00,10.00 L 40.00,10.00 Z
+               M 45.00,41.34 L 55.00,58.66 L 89.64,38.66 L 79.64,21.34 Z
+               M 55.00,41.34 L 45.00,58.66 L 79.64,78.66 L 89.64,61.34 Z
+               M 60.00,50.00 L 40.00,50.00 L 40.00,90.00 L 60.00,90.00 Z
+               M 55.00,58.66 L 45.00,41.34 L 10.36,61.34 L 20.36,78.66 Z
+               M 45.00,58.66 L 55.00,41.34 L 20.36,21.34 L 10.36,38.66 Z"
+            fill="#1e3a9e"/>
+    </svg>
+    <div class="logo">Praxis<b>Ambulancier</b></div>
+    <div class="sub">DEA & AA</div>
+  </header>
+
+  <div class="card">
+    <h1>🚑 Pass annuel PraxisAmbulancier</h1>
+    <p class="desc">Un accès complet aux 6 blocs de compétences : bilans, gestes, installation, régulation, véhicule, réalités du métier — même hors connexion.</p>
+
+    <div class="champ">
+      <label>NIVEAU</label>
+      <select id="niveau">
+        <option value="AA">Auxiliaire Ambulancier (AA)</option>
+        <option value="DEA">Diplôme d'État Ambulancier (DEA)</option>
+      </select>
+    </div>
+
+    <div class="prix-box">
+      <span class="prix">29 €</span>
+      <span class="prix-unite">/ an</span>
+    </div>
+
+    <ul class="inclus">
+      <li>Les 6 blocs de compétences (BC1 à BC6)</li>
+      <li>Contenu adapté au niveau AA ou DEA</li>
+      <li>Mises en situation et entraînement</li>
+      <li>Fonctionne aussi hors connexion</li>
+      <li>Code d'accès envoyé immédiatement par email</li>
+    </ul>
+
+    <button id="btn" onclick="acheter()">Accéder au paiement sécurisé →</button>
+    <div class="msg-err" id="msg-err"></div>
+
+    <p class="legal">Paiement sécurisé par Stripe. En continuant, vous acceptez nos <a href="https://fabsav68-lgtm.github.io/simcare/cgv.html">CGV</a> et notre <a href="https://fabsav68-lgtm.github.io/simcare/confidentialite.html">politique de confidentialité</a>.</p>
+  </div>
+
+  <footer>PRAXISAMBULANCIER · MEDEXPERT</footer>
+</div>
+
+<script>
+async function acheter(){
+  const btn = document.getElementById('btn');
+  const msgErr = document.getElementById('msg-err');
+  const niveau = document.getElementById('niveau').value;
+  btn.disabled = true;
+  btn.textContent = 'Redirection en cours...';
+  msgErr.textContent = '';
+
+  const cle = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
+
+  try {
+    const response = await fetch('https://fvrfiikrasezlzpaxpqz.supabase.co/functions/v1/creer-paiement', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'apikey': cle, 'Authorization': 'Bearer ' + cle },
+      body: JSON.stringify({ app: 'PraxisAmbulancier', annee_formation: niveau, duree_type: 'annuel', montant: 29, nom_produit: 'PraxisAmbulancier — Pass annuel (' + niveau + ')' }),
+    });
+    const data = await response.json();
+    if (data.url) { window.location.href = data.url; }
+    else { msgErr.textContent = 'Une erreur est survenue, merci de réessayer.'; btn.disabled = false; btn.textContent = 'Accéder au paiement sécurisé →'; }
+  } catch(err) {
+    msgErr.textContent = 'Erreur réseau, vérifiez votre connexion.';
+    btn.disabled = false; btn.textContent = 'Accéder au paiement sécurisé →';
+  }
+}
+</script>
+</body>
+</html>
