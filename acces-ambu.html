@@ -44,6 +44,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;background:ra
   <div class="logo">Praxis<span>Ambulancier</span></div>
   <span class="logo-sub">Formation pré-hospitalière · DEA & AA</span>
 
+  <div id="msg-paiement" style="display:none;background:rgba(63,185,80,.1);border:1.5px solid #3fb950;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.6;text-align:center;max-width:380px"></div>
+
   <div class="card" id="card-login">
     <div class="card-title">🚑 Code d'accès</div>
     <div class="card-sub">Saisissez le code fourni par votre formateur.</div>
@@ -192,6 +194,26 @@ function accordAcces(code, niveau, label){
   setTimeout(function(){ document.getElementById('bar-fill').style.width = '100%'; }, 50);
   setTimeout(function(){ window.location.replace('index-PraxisAmbulancier.html'); }, 2100);
 }
+
+// Message de confirmation après retour de paiement Stripe
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var statut = params.get('paiement');
+  var zone = document.getElementById('msg-paiement');
+  if(!zone) return;
+  if(statut === 'succes'){
+    zone.style.display = 'block';
+    zone.innerHTML = '✅ <strong>Paiement réussi !</strong><br>Votre code d\'accès arrive par email dans quelques instants — pensez à vérifier vos spams.';
+  } else if(statut === 'annule'){
+    zone.style.display = 'block';
+    zone.style.background = 'rgba(255,176,32,.1)';
+    zone.style.borderColor = '#ffb020';
+    zone.innerHTML = 'Paiement annulé — vous pouvez réessayer quand vous le souhaitez.';
+  }
+  if(statut){
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+})();
 </script>
 </body>
 </html>
