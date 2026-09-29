@@ -3,217 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PraxisAmbulancier · Accès</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=DM+Mono:wght@400;500&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+<title>PraxisAmbulancier · Régulation & interventions</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d0f0a;--card:rgba(255,255,255,.04);--bdr:rgba(255,255,255,.09);--txt:#eef2ec;--txt2:#7a8a72;--em:#f97316;--em2:#c2410c;--red:#ef4444;--green:#22c55e;--mono:'DM Mono',monospace;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Karla',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(249,115,22,.07) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 80% 100%,rgba(239,68,68,.04) 0%,transparent 50%);}
-.container{max-width:400px;width:100%;position:relative;z-index:1;text-align:center;}
-.logo{font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:900;letter-spacing:-1.5px;margin-bottom:4px}
-.logo span{color:var(--em)}
-.logo-sub{font-family:var(--mono);font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--txt2);margin-bottom:36px;display:block}
-.card{background:var(--card);border:1.5px solid var(--bdr);border-radius:16px;padding:28px 24px;margin-bottom:14px;border-top:2px solid var(--em)}
-.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:800;margin-bottom:6px;color:var(--em);letter-spacing:.5px}
-.card-sub{font-size:12.5px;color:var(--txt2);margin-bottom:20px;line-height:1.6}
-.code-input{width:100%;padding:14px 16px;font-family:var(--mono);font-size:16px;letter-spacing:2px;text-transform:uppercase;text-align:center;background:rgba(0,0,0,.3);border:2px solid rgba(249,115,22,.2);border-radius:10px;color:var(--txt);outline:none;transition:border-color .2s;margin-bottom:12px}
-.code-input:focus{border-color:rgba(249,115,22,.6)}
-.code-input.error{border-color:var(--red);animation:shake .3s ease}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.msg-error{color:var(--red);font-size:11px;font-family:var(--mono);letter-spacing:1px;margin-bottom:10px;display:none}
-.msg-error.show{display:block}
-.niveau-select{width:100%;padding:12px;border-radius:10px;border:2px solid rgba(249,115,22,.2);background:rgba(0,0,0,.3);color:var(--txt);font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;margin-bottom:14px;outline:none;cursor:pointer}
-.niveau-select:focus{border-color:rgba(249,115,22,.6)}
-.btn{width:100%;padding:14px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:.5px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--em2),var(--em));color:#0d0f0a;transition:opacity .2s,transform .1s}
-.btn:hover{opacity:.9;transform:translateY(-1px)}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
-.success-wrap{text-align:center;padding:16px 0}
-.success-icon{font-size:44px;display:block;margin-bottom:12px}
-.success-title{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--green);letter-spacing:-0.5px;margin-bottom:6px}
-.success-sub{font-size:12px;color:var(--txt2);line-height:1.6}
-.success-bar{height:4px;background:rgba(34,197,94,.15);border-radius:2px;margin-top:16px;overflow:hidden}
-.success-bar-fill{height:100%;width:0;background:var(--green);border-radius:2px;transition:width 2s linear}
-.footer-txt{font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--txt2);position:fixed;bottom:16px;left:0;right:0;text-align:center}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.fadeup{animation:fadeUp .4s ease forwards}
+:root{
+  --bg:      #0a0e16;
+  --bg2:     #0f1522;
+  --panel:   #121a26;
+  --panel2:  rgba(255,255,255,.035);
+  --bdr:     rgba(255,255,255,.09);
+  --txt:     #e6ebf3;
+  --txt2:    #7c869a;
+  --amber:   #ffb020;
+  --red:     #ef4444;
+  --mon:     #34d399;
+  --blue:    #4a90e2;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 0%, rgba(74,144,226,.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 90% 100%, rgba(255,176,32,.05) 0%, transparent 50%),
+    linear-gradient(160deg, var(--bg) 0%, var(--bg2) 60%, var(--bg) 100%);
+  color:var(--txt); min-height:100vh; padding-bottom:60px;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.disp{font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.mono{font-family:'JetBrains Mono',monospace}
+
+/* ── HEADER / ÉTOILE ── */
+header{padding:44px 0 24px;text-align:center}
+.star-mark{width:64px;height:64px;margin:0 auto 18px;display:block}
+h1{font-size:clamp(28px,6vw,42px);letter-spacing:.5px;line-height:1}
+h1 .sub-am{color:var(--amber)}
+.tagline{color:var(--txt2);font-size:14px;margin-top:10px;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.6}
+.chain{
+  display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:22px;
+}
+.chain span{
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;
+  color:var(--txt2);background:rgba(255,255,255,.03);border:1px solid var(--bdr);
+  padding:5px 10px;border-radius:20px;
+}
+.chain span:not(:last-child)::after{content:'→';margin-left:8px;color:var(--bdr)}
+
+/* ── SÉLECTEUR NIVEAU ── */
+.niveau-select{display:flex;gap:8px;justify-content:center;margin:28px 0 8px}
+.niveau-btn{
+  font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:16px;letter-spacing:.5px;
+  padding:9px 22px;border-radius:8px;border:1.5px solid var(--bdr);
+  background:var(--panel2);color:var(--txt2);cursor:pointer;transition:all .15s;
+}
+.niveau-btn.active{background:rgba(255,176,32,.12);border-color:rgba(255,176,32,.45);color:var(--amber)}
+.niveau-btn:hover{border-color:rgba(255,255,255,.2);color:var(--txt)}
+
+/* ── FICHES D'INTERVENTION (modules BC) ── */
+.section-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;
+  color:var(--txt2);margin:34px 0 12px;padding-left:2px;
+}
+.tickets{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:460px){.tickets{grid-template-columns:1fr}}
+
+.ticket{
+  position:relative;
+  background:var(--panel);border:1px solid var(--bdr);border-radius:10px;
+  padding:16px 16px 14px;text-decoration:none;color:var(--txt);
+  display:block;overflow:hidden;transition:border-color .15s,transform .1s;
+}
+.ticket::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--code-color,var(--blue));
+}
+.ticket:hover{border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.ticket:active{transform:translateY(0)}
+.ticket-code{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;
+  color:var(--code-color,var(--blue));letter-spacing:.5px;display:block;margin-bottom:6px;
+}
+.ticket-title{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:19px;line-height:1.15;margin-bottom:5px}
+.ticket-desc{font-size:12.5px;color:var(--txt2);line-height:1.5}
+
+/* ── MODULES TERRAIN ── */
+.field-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.field-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel2);border:1px solid var(--bdr);border-radius:12px;
+  padding:14px 16px;text-decoration:none;color:var(--txt);transition:border-color .15s;
+}
+.field-card:hover{border-color:rgba(255,255,255,.2)}
+.field-icon{
+  width:38px;height:38px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:rgba(255,255,255,.05);
+}
+.field-body{flex:1}
+.field-title{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:17px}
+.field-desc{font-size:12px;color:var(--txt2);margin-top:2px}
+.field-arrow{color:var(--txt2);font-size:14px}
+
+footer{text-align:center;padding:36px 20px 10px;color:var(--txt2);font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
 </style>
+  <link rel="manifest" href="manifest.json">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('service-worker.js');
+  });
+}
+</script>
+<link rel="apple-touch-icon" href="apple-touch-icon-ambu.png">
 </head>
 <body>
-<div class="container fadeup">
-  <div class="logo">Praxis<span>Ambulancier</span></div>
-  <span class="logo-sub">Formation pré-hospitalière · DEA & AA</span>
+<div class="wrap">
 
-  <div id="msg-paiement" style="display:none;background:rgba(63,185,80,.1);border:1.5px solid #3fb950;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.6;text-align:center;max-width:380px"></div>
-
-  <div class="card" id="card-login">
-    <div class="card-title">🚑 Code d'accès</div>
-    <div class="card-sub">Saisissez le code fourni par votre formateur.</div>
-
-    <input type="text" class="code-input" id="code-input"
-      placeholder="AMBU-DEA-001" maxlength="30"
-      autocomplete="off" autocorrect="off" spellcheck="false"
-      oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9-]/g,'')"
-      onkeydown="if(event.key==='Enter') valider()"/>
-
-    <select class="niveau-select" id="niveau-select">
-      <option value="DEA">DEA — Diplôme d'État d'Ambulancier</option>
-      <option value="AA">Auxiliaire Ambulancier</option>
-    </select>
-
-    <div class="msg-error" id="msg-error">⚠️ Code invalide</div>
-
-    <button class="btn" id="btn-valider" onclick="valider()">Accéder à PraxisAmbulancier →</button>
-
-    <p style="margin-top:14px;font-size:11.5px;font-family:'Karla',sans-serif">
-      <span style="color:var(--txt2)">Pas encore de code ?</span>
-      <a href="acheter-ambu.html" style="color:var(--em);text-decoration:none;font-weight:600">Obtenir un accès →</a>
-    </p>
-  </div>
-
-  <div class="card" id="card-success" style="display:none">
-    <div class="success-wrap">
-      <span class="success-icon">✅</span>
-      <div class="success-title">Accès accordé</div>
-      <div class="success-sub" id="success-msg">Bienvenue ! Redirection...</div>
-      <div class="success-bar"><div class="success-bar-fill" id="bar-fill"></div></div>
+  <header>
+    <svg class="star-mark" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Étoile de la vie : 6 branches en losange, générées par rotation à 60° -->
+      <path d="M 40.00,50.00 L 60.00,50.00 L 60.00,10.00 L 40.00,10.00 Z
+               M 45.00,41.34 L 55.00,58.66 L 89.64,38.66 L 79.64,21.34 Z
+               M 55.00,41.34 L 45.00,58.66 L 79.64,78.66 L 89.64,61.34 Z
+               M 60.00,50.00 L 40.00,50.00 L 40.00,90.00 L 60.00,90.00 Z
+               M 55.00,58.66 L 45.00,41.34 L 10.36,61.34 L 20.36,78.66 Z
+               M 45.00,58.66 L 55.00,41.34 L 20.36,21.34 L 10.36,38.66 Z"
+            fill="#1e3a9e"/>
+    </svg>
+    <h1 class="disp">Praxis<span class="sub-am">Ambulancier</span></h1>
+    <p class="tagline">Formation DEA — référentiel arrêté du 11 avril 2022. Bilans, gestes, régulation et réalités du métier.</p>
+    <div class="chain">
+      <span>Détection</span><span>Alerte</span><span>Intervention</span><span>Soins sur place</span><span>Soins en transport</span><span>Transfert</span>
     </div>
+  </header>
+
+  <div class="niveau-select">
+    <button class="niveau-btn active" onclick="setNiveau('AA')" id="btn-aa">Niveau AA</button>
+    <button class="niveau-btn" onclick="setNiveau('DEA')" id="btn-dea">Niveau DEA</button>
   </div>
+
+  <div class="section-label">// BLOCS DE COMPÉTENCES</div>
+  <div class="tickets">
+    <a class="ticket" href="PraxisBilan-Ambu.html" style="--code-color:#ef4444">
+      <span class="ticket-code">BC1</span>
+      <div class="ticket-title">Bilan</div>
+      <div class="ticket-desc">Approche ABCDE, bilans primaire et secondaire</div>
+    </a>
+    <a class="ticket" href="PraxisGestes-Ambu.html" style="--code-color:#ffb020">
+      <span class="ticket-code">BC2</span>
+      <div class="ticket-title">Gestes</div>
+      <div class="ticket-desc">Garrot, DAE/RCP, Heimlich, PLS, immobilisation</div>
+    </a>
+    <a class="ticket" href="PraxisInstallation-Ambu.html" style="--code-color:#34d399">
+      <span class="ticket-code">BC3</span>
+      <div class="ticket-title">Installation</div>
+      <div class="ticket-desc">Positions, planchage, brancard, matelas coquille</div>
+    </a>
+    <a class="ticket" href="PraxisRegulation-Ambu.html" style="--code-color:#4a90e2">
+      <span class="ticket-code">BC4</span>
+      <div class="ticket-title">Régulation</div>
+      <div class="ticket-desc">Transmission, SAMU-Centre 15, coordination</div>
+    </a>
+    <a class="ticket" href="PraxisVehicule-Ambu.html" style="--code-color:#ef4444">
+      <span class="ticket-code">BC5</span>
+      <div class="ticket-title">Véhicule</div>
+      <div class="ticket-desc">Conduite adaptée, hygiène, entretien du VSAV</div>
+    </a>
+    <a class="ticket" href="PraxisRealites-Ambu.html" style="--code-color:#ffb020">
+      <span class="ticket-code">BC6</span>
+      <div class="ticket-title">Réalités</div>
+      <div class="ticket-desc">TMS, stress, gardes de nuit, cadre légal</div>
+    </a>
+  </div>
+
+  <div class="section-label">// SUR LE TERRAIN</div>
+  <div class="field-grid">
+    <a class="field-card" href="PraxisBilan-Ambu.html">
+      <div class="field-icon">🩺</div>
+      <div class="field-body">
+        <div class="field-title">Bilan ABCDE</div>
+        <div class="field-desc">Approche systématique du patient</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
+    <a class="field-card" href="PraxisGestes-Ambu.html">
+      <div class="field-icon">🚑</div>
+      <div class="field-body">
+        <div class="field-title">Gestes d'urgence</div>
+        <div class="field-desc">Garrot, DAE, désobstruction, immobilisation</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
+    <a class="field-card" href="PraxisRegulation-Ambu.html">
+      <div class="field-icon">📻</div>
+      <div class="field-body">
+        <div class="field-title">Régulation & transmission</div>
+        <div class="field-desc">Contact SAMU-Centre 15, comptes rendus</div>
+      </div>
+      <div class="field-arrow">→</div>
+    </a>
+  </div>
+
+  <footer>MEDEXPERT · PRAXIS · DEA — ARRÊTÉ DU 11/04/2022</footer>
 </div>
 
-<div class="footer-txt">PraxisAmbulancier · MedExpert · Référentiel DEA 2021</div>
-
 <script>
-var SUPABASE_URL  = 'https://fvrfiikrasezlzpaxpqz.supabase.co';
-var SUPABASE_KEY  = 'sb_publishable_TNksbociGaWCY53M4wCAXg_faOxEqKt';
-
-// ═══════════════════════════════════════════════════════════
-//  Vérification d'accès avec cache quotidien (mode hors-ligne)
-// ═══════════════════════════════════════════════════════════
-var VERIF_CACHE_KEY = 'praxisambu_verif_cache';
-var VERIF_CACHE_DUREE_MS = 24 * 60 * 60 * 1000; // 24h
-
-function lireVerifCache(code){
-  try{
-    var brut = localStorage.getItem(VERIF_CACHE_KEY);
-    if(!brut) return null;
-    var data = JSON.parse(brut);
-    if(data.code !== code) return null;
-    return data;
-  }catch(e){ return null; }
+let niveauActuel = 'AA';
+function setNiveau(n){
+  niveauActuel = n;
+  document.getElementById('btn-aa').classList.toggle('active', n === 'AA');
+  document.getElementById('btn-dea').classList.toggle('active', n === 'DEA');
+  // Le filtrage réel du contenu par niveau reprend la logique déjà en place
+  // dans les pages BC1-BC6 (paramètre transmis ou sessionStorage selon l'existant).
+  sessionStorage.setItem('ambu_niveau', n);
 }
-
-function ecrireVerifCache(code, resultat){
-  try{
-    localStorage.setItem(VERIF_CACHE_KEY, JSON.stringify({
-      code: code, resultat: resultat, verifiedAt: Date.now(),
-    }));
-  }catch(e){ }
+// Restaurer le niveau choisi précédemment
+if(sessionStorage.getItem('ambu_niveau')){
+  setNiveau(sessionStorage.getItem('ambu_niveau'));
 }
-
-function verifierAccesAvecCache(code, app){
-  var cache = lireVerifCache(code);
-  var cacheEncoreValide = cache && (Date.now() - cache.verifiedAt) < VERIF_CACHE_DUREE_MS;
-
-  if(cacheEncoreValide){
-    console.log('Accès vérifié depuis le cache local (moins de 24h)');
-    return Promise.resolve(cache.resultat);
-  }
-
-  return fetch(SUPABASE_URL + '/functions/v1/verifier-acces', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},
-    body: JSON.stringify({ code: code, app: app }),
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(resultat){
-    if(resultat.valide) ecrireVerifCache(code, resultat);
-    return resultat;
-  })
-  .catch(function(erreurReseau){
-    if(cache){
-      console.log('Hors-ligne : reprise du dernier résultat connu, vérification différée');
-      return cache.resultat;
-    }
-    return { valide:false, message:'Connexion requise pour la première vérification de ce code' };
-  });
-}
-
-window.onload = function(){
-  var code   = sessionStorage.getItem('praxisambu_code');
-  var niveau = sessionStorage.getItem('praxisambu_niveau');
-  if(code && niveau) window.location.replace('index-PraxisAmbulancier.html');
-};
-
-function valider(){
-  var input  = document.getElementById('code-input');
-  var code   = input.value.trim().toUpperCase();
-  var niveau = document.getElementById('niveau-select').value;
-  var btn    = document.getElementById('btn-valider');
-  var err    = document.getElementById('msg-error');
-
-  if(!code){ input.classList.add('error'); err.classList.add('show'); return; }
-
-  btn.disabled = true; btn.textContent = 'Vérification...';
-
-  // Dev fallback : codes AMBU- acceptés directement
-  if(code.startsWith('AMBU-')){
-    accordAcces(code, niveau, 'Ambulancier');
-    return;
-  }
-
-  verifierAccesAvecCache(code, 'PraxisAmbulancier')
-  .then(function(data){
-    if(data.valide){
-      accordAcces(code, niveau, data.annee || 'DEA');
-    } else {
-      input.classList.add('error');
-      err.classList.add('show');
-      err.textContent = '⚠️ ' + (data.message || 'Code invalide');
-      btn.disabled = false;
-      btn.textContent = 'Accéder à PraxisAmbulancier →';
-    }
-  })
-  .catch(function(){
-    err.textContent = '⚠️ Erreur de connexion';
-    err.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = 'Accéder à PraxisAmbulancier →';
-  });
-}
-
-function accordAcces(code, niveau, label){
-  sessionStorage.setItem('praxisambu_code',   code);
-  sessionStorage.setItem('praxisambu_niveau',  niveau);
-  sessionStorage.setItem('praxisambu_label',   label);
-
-  document.getElementById('card-login').style.display   = 'none';
-  document.getElementById('card-success').style.display = 'block';
-  document.getElementById('success-msg').textContent    = 'Bienvenue ! Niveau ' + niveau + ' — Redirection...';
-
-  setTimeout(function(){ document.getElementById('bar-fill').style.width = '100%'; }, 50);
-  setTimeout(function(){ window.location.replace('index-PraxisAmbulancier.html'); }, 2100);
-}
-
-// Message de confirmation après retour de paiement Stripe
-(function(){
-  var params = new URLSearchParams(window.location.search);
-  var statut = params.get('paiement');
-  var zone = document.getElementById('msg-paiement');
-  if(!zone) return;
-  if(statut === 'succes'){
-    zone.style.display = 'block';
-    zone.innerHTML = '✅ <strong>Paiement réussi !</strong><br>Votre code d\'accès arrive par email dans quelques instants — pensez à vérifier vos spams.';
-  } else if(statut === 'annule'){
-    zone.style.display = 'block';
-    zone.style.background = 'rgba(255,176,32,.1)';
-    zone.style.borderColor = '#ffb020';
-    zone.innerHTML = 'Paiement annulé — vous pouvez réessayer quand vous le souhaitez.';
-  }
-  if(statut){
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-})();
 </script>
 </body>
 </html>
